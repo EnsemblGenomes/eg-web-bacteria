@@ -1,0 +1,64 @@
+/*#static { margin: 1% 1% 0 1%; } <--not needed for e68 */
+
+/* add v scroll bar to species list to make it more usable with large list */
+div.reorder_species .species {
+	height: 300px; 
+	overflow-y: scroll; 
+	border: 1px solid rgb(221, 221, 221); 
+	padding-top: 10px; 
+	padding-bottom: 10px;
+}
+
+.content .species_description h3 {
+  margin: 17px 0 10px;
+}
+
+.content .species_description th,
+.content .species_description td {
+  color: #555555;  
+  padding: 0 0 5px 0;
+}
+
+.content .species_description th {
+  padding-right: 15px; 
+}
+
+.content .species_description p {
+	margin: 7px 0; 
+}
+
+.content .species_description ul {
+  margin: 0;
+  padding: 0;
+}
+
+.content .species_description ul li {
+  list-style: none;
+}
+
+.content .species_description .organism {
+  float:left;
+  margin-right: 10px;
+}
+
+.content .species_description .classification {
+  float:left;
+}
+
+.content .species_description .classification .arrow {
+  font-weight: bold;
+  vertical-align: 2px;
+}
+
+
+.content .species_description ul.ena_records  {
+  padding: 0 0 0 3px;
+}
+
+.content .species_description ul.ena_records li {
+  display: inline;
+}
+
+.content .species_description  ul li {
+	margin-bottom: 0.1em;
+}

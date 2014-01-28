@@ -1,0 +1,29 @@
+/* bacterias-specific homepage styles */
+
+.home-search-flex {
+  float:left;
+  width:50%;
+}
+
+.access-box {
+  background: #ffffff url("/img/strap-corner.png") bottom right no-repeat;
+}
+
+.access-box h1 {
+  white-space:nowrap;
+  font-size:35px;
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+
+@media screen and (max-width: 1250px) {  
+  .access-box h1 { font-size: 27px }
+}  
+
+@media screen and (max-width: 970px) {  
+  .access-box h1 { font-size: 21px }
+}
+
+.access-box ul {
+  padding-right:70px;
+}

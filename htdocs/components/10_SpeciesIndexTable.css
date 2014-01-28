@@ -1,0 +1,6 @@
+/* CSS for datatable on /info/about/species.html */
+
+#species_index_table .no-results      { margin: 10px; font-weight: bold}
+#species_index_table .no-results-help { margin: 10px;}
+#species_index_table_filter input     { width: 250px; }
+#species_index_table_filter .overlay  { width:0; height:0; overflow:hidden; } /* hide placeholder text */
