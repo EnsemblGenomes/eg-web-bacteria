@@ -4,13 +4,11 @@ Ensembl.Panel.SpeciesList = Ensembl.Panel.extend({
   init: function () {
     this.base();
     
-    var sitePrefix = $('[name="sitePrefix"]', this.el).val();
-
     var ac = $("#species_autocomplete", this.el);
     ac.autocomplete({
       minLength: 3,
       source:   sitePrefix + '/Multi/Ajax/species_autocomplete',
-      select:   function(event, ui) { if (ui.item) Ensembl.redirect(sitePrefix + '/' + ui.item.production_name + '/Info/Index') },
+      select:   function(event, ui) { if (ui.item) Ensembl.redirect('/' + ui.item.production_name + '/Info/Index') },
       search:   function() { ac.addClass('loading') },
       response: function(event, ui) {
         ac.removeClass('loading');
