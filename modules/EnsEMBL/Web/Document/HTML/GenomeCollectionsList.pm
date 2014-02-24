@@ -28,7 +28,6 @@ sub render {
     <div class="home-search-flex">
       <div id="species_list" class="js_panel">
         <input type="hidden" class="panel_type" value="SpeciesList" />
-        <input type="hidden" name="sitePrefix" value="" />
         <h3 class="first">Search for a genome</h3>
         <form id="species_autocomplete_form" action="/info/about/species.html" style="margin-bottom:5px" method="get">
           <div>

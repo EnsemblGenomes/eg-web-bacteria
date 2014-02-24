@@ -7,7 +7,7 @@ Ensembl.Panel.SpeciesList = Ensembl.Panel.extend({
     var ac = $("#species_autocomplete", this.el);
     ac.autocomplete({
       minLength: 3,
-      source:   sitePrefix + '/Multi/Ajax/species_autocomplete',
+      source:   '/Multi/Ajax/species_autocomplete',
       select:   function(event, ui) { if (ui.item) Ensembl.redirect('/' + ui.item.production_name + '/Info/Index') },
       search:   function() { ac.addClass('loading') },
       response: function(event, ui) {
