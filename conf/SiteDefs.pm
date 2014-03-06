@@ -21,9 +21,9 @@ use strict;
 
 sub update_conf {
     @SiteDefs::ENSEMBL_PERL_DIRS    = (
-	    $SiteDefs::ENSEMBL_SERVERROOT.'/perl',
-	    $SiteDefs::ENSEMBL_SERVERROOT.'/eg-plugins/common/perl',
-	    $SiteDefs::ENSEMBL_SERVERROOT.'/eg-plugins/bacteria/perl',
+	    $SiteDefs::ENSEMBL_WEBROOT.'/perl',
+	    $SiteDefs::ENSEMBL_SERVERROOT.'/eg-web-common/perl',
+	    $SiteDefs::ENSEMBL_SERVERROOT.'/eg-web-bacteria/perl',
 	  );
 
     $SiteDefs::ENSEMBL_PORT           = 8002;
@@ -51,7 +51,7 @@ sub update_conf {
     $SiteDefs::ENSEMBL_SECONDARY_SPECIES = 'tropheryma_whipplei_tw08_27'; 
     $SiteDefs::__species_aliases{ 'tropheryma_whipplei_tw08_27'       } = [qw(tw)];
 
-    $SiteDefs::DOCSEARCH_INDEX_DIR = $SiteDefs::ENSEMBL_SERVERROOT.'/eg-plugins/bacteria/data/docsearch';
+    $SiteDefs::DOCSEARCH_INDEX_DIR = $SiteDefs::ENSEMBL_SERVERROOT.'/eg-web-bacteria/data/docsearch';
 
     $SiteDefs::ENA_COLLECTION_ID = 201;
     $SiteDefs::ENA_SAMPLE_SEQ = "GCGAACCGTATTCTGCCAGAGCTGAAAGATGATAAAGAAATCAGCAGCCACGATAGCTCG
