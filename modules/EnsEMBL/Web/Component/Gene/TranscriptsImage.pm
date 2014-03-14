@@ -20,18 +20,6 @@ package EnsEMBL::Web::Component::Gene::TranscriptsImage;
 
 use strict;
 
-use base qw(EnsEMBL::Web::Component::Gene);
-
-sub _init { 
-  my $self = shift;
-  $self->cacheable(0);
-  $self->ajaxable(1);
-}
-
-sub caption {
-  return 'Transcripts';
-}
-
 sub content {
   my $self   = shift;
   my $object = $self->object;

@@ -31,7 +31,6 @@ sub content {
   my $object      = $self->object;
   my $threshold   = 1000100 * ($hub->species_defs->ENSEMBL_GENOME_SIZE || 1);
   my $image_width = $self->image_width;
-  my $info = '';
   
   return $self->_warning('Region too large', '<p>The region selected is too large to display in this view - use the navigation above to zoom in...</p>') if $object->length > $threshold;
 
