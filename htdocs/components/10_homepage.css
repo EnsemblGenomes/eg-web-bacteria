@@ -11,17 +11,17 @@
 
 .access-box h1 {
   white-space:nowrap;
-  font-size:35px;
+  font-size:31px;
   font-weight: normal;
   margin-bottom: 10px;
 }
 
 @media screen and (max-width: 1250px) {  
-  .access-box h1 { font-size: 27px }
+  .access-box h1 { font-size: 23px }
 }  
 
 @media screen and (max-width: 970px) {  
-  .access-box h1 { font-size: 21px }
+  .access-box h1 { font-size: 18px }
 }
 
 .access-box ul {
