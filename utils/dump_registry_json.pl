@@ -20,14 +20,10 @@
 use strict;
 use FindBin qw($Bin);
 use Getopt::Long;
-
-BEGIN { 
-   push @INC, "$Bin/modules";
-   # path to api code
-   push @INC, "$Bin/../../../ensembl/modules/";
-   # path to EGEna taxonomy api code
-   push @INC, "$Bin/../../../ensemblgenomes-api/modules/";
-}  
+use lib "$Bin/../../eg-web-common/utils";
+use LibDirs;
+use lib "$LibDirs::SERVERROOT/ensemblgenomes-api/modules";
+use lib "$LibDirs::SERVERROOT/eg-web-bacteria/modules";
 
 use Bio::EnsEMBL::LookUp;
 
