@@ -205,6 +205,17 @@ sub modify_tree {
      }
   }
   #Ontology graphs EOF      
+
+
+  # EG:ENSEMBL-2785 add this new URL so that the Transcript info appears at the top of the page for the Karyotype display with Locations tables
+    my $sim_node = $self->get_node('Similarity');
+    $sim_node->append($self->create_subnode('Similarity/Locations', '',
+      [qw(
+         genome  EnsEMBL::Web::Component::Location::Genome
+      ) ],
+      {  'availability' => 'transcript', 'no_menu_entry' => 1 }
+    ));
+  # EG:ENSEMBL-2785 end
 }
 
 
