@@ -593,7 +593,6 @@ sub _munge_meta {
     my $genome_info_adaptor = EnsEMBL::Web::DBSQL::MetaDataAdaptor->new( $metadata_db )->genome_info_adaptor;
     if ($genome_info_adaptor) {
       my $dbname = $self->tree->{databases}->{DATABASE_CORE}->{NAME};
-      $dbname =~ s/23_76/22_75/;
       foreach my $genome (@{ $genome_info_adaptor->fetch_all_by_dbname($dbname) }) {
         my $species = $genome->species;
         $self->tree->{$species}->{'SEROTYPE'}     = $genome->serotype;
