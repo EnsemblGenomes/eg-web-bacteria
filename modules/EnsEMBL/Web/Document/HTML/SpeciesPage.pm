@@ -41,12 +41,14 @@ sub render {
             <th title="Species">Species</th>
             <th title="Assembly">Assembly</th>
             <th title="Taxonomy ID">Taxonomy ID</th>
+            <th title="Serotype">Serotype</th>
+            <th title="Publications">Publications</th>
             <th title="Present in pan-taxonomic compara">Present in pan-taxonomic compara</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td colspan="5" class="dataTables_empty">Loading...</td>
+            <td colspan="7" class="dataTables_empty">Loading...</td>
           </tr>
         </tbody>
       </table>

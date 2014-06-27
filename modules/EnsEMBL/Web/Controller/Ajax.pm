@@ -79,6 +79,8 @@ sub species_list {
     my $alias          = $species_defs->get_config($species, 'SPECIES_ALIAS');
     my $tax_id         = $species_defs->get_config($species, 'TAXONOMY_ID');
     my $assembly_name  = $species_defs->get_config($species, 'ASSEMBLY_NAME');
+    my $serotype       = $species_defs->get_config($species, 'SEROTYPE');
+    my $publications   = $species_defs->get_config($species, 'PUBLICATIONS');
     my $display_name   = $species_defs->species_display_label($species);
     my $in_pan_compara = exists $pan_compara->{GENOME_DB}->{$species}; 
      
@@ -87,6 +89,8 @@ sub species_list {
       qq{<a href="/$species/Info/Index/">$display_name</a>},
       qq{<a href="/$species/Info/Annotation/#assembly">$assembly_name</a>},
       qq{<a href="http://www.uniprot.org/taxonomy/$tax_id">$tax_id</a>},
+      $serotype,
+      join(' ', map { qq{<a href="http://europepmc.org/abstract/MED/$_">$_</a>} } @{ $publications || [] }),
       $in_pan_compara ? 'Y' : 'N', # hack to reverse sorting
     ];
   }

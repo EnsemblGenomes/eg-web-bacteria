@@ -24,9 +24,11 @@ Ensembl.Panel.SpeciesIndexTable = Ensembl.Panel.extend({
         },
         "aoColumns": [ 
           { sWidth: '0%', bVisible: false },
-          { sWidth: '60%' },
-          { sWidth: '20%' },
+          { sWidth: '40%' },
           { sWidth: '10%' },
+          { sWidth: '10%' },
+          { sWidth: '10%' },
+          { sWidth: '20%' },
           { sWidth: '10%' }
         ],
         sPaginationType: 'full_numbers',

@@ -22,6 +22,7 @@ use strict;
 use warnings;
 no warnings qw(uninitialized);
 
+use EnsEMBL::Web::DBSQL::MetaDataAdaptor;
 use Bio::EnsEMBL::ExternalData::DAS::SourceParser;
 use Data::Dumper;
 
@@ -404,136 +405,6 @@ sub _summarise_funcgen_db {
 # The following functions munge the multi-species databases              #
 #========================================================================#
 
-sub _munge_meta_new {
-  my $self = shift;
-  
-  ##########################################
-  # SPECIES_COMMON_NAME     = Human        #
-  # SPECIES_PRODUCTION_NAME = homo_sapiens #
-  # SPECIES_SCIENTIFIC_NAME = Homo sapiens #
-  ##########################################
-  
-  my %keys = qw(
-    species.taxonomy_id        TAXONOMY_ID
-    species.display_name SPECIES_COMMON_NAME
-    species.production_name    SPECIES_PRODUCTION_NAME
-    species.scientific_name    SPECIES_SCIENTIFIC_NAME
-    assembly.default           ASSEMBLY_NAME
-    assembly.name              ASSEMBLY_DISPLAY_NAME
-    liftover.mapping           ASSEMBLY_MAPPINGS
-    genebuild.method           GENEBUILD_METHOD
-    provider.name              PROVIDER_NAME
-    provider.url               PROVIDER_URL
-    provider.logo              PROVIDER_LOGO
-    species.strain             SPECIES_STRAIN
-    species.production_name           SYSTEM_NAME
-    species.wikipedia_url         WIKIPEDIA_URL
-  );
-  
-  my @months    = qw(blank Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
-  my $meta_info = $self->_meta_info('DATABASE_CORE') || {};
-  my @sp_count  = grep { $_ > 0 } keys %$meta_info;
-  
-  ## How many species in database?
-  $self->tree->{'SPP_IN_DB'} = scalar @sp_count;
-
-  if (scalar @sp_count > 1) {
-    if ($meta_info->{0}{'species.group'}) {
-      $self->tree->{'DISPLAY_NAME'} = $meta_info->{0}{'species.group'};
-    } else {
-      (my $group_name = $self->{'_species'}) =~ s/_collection//;
-      $self->tree->{'DISPLAY_NAME'} = $group_name;
-    }
-  } else {
-    $self->tree->{'DISPLAY_NAME'} = $meta_info->{1}{'species.display_name'}[0];
-  }
-
-  while (my ($species_id, $meta_hash) = each (%$meta_info)) {
-    next unless $species_id && $meta_hash && ref($meta_hash) eq 'HASH';
-    
-    ## Do species name and group
-    my ($species, $bioname, $bioshort);
-    my $taxonomy = $meta_hash->{'species.classification'};
-    
-    if ($taxonomy && scalar(@$taxonomy)) {
-      $species  = "$taxonomy->[1]_$taxonomy->[0]";
-      $bioname  = "$taxonomy->[1] $taxonomy->[0]";
-      $bioshort = substr($taxonomy->[1], 0, 1) . '.' . $taxonomy->[0];
-      
-      my $order = $self->tree->{'TAXON_ORDER'};
-      
-      foreach my $taxon (@$taxonomy) {
-        foreach my $group (@$order) {
-          if ($taxon eq $group) {
-            $self->tree->{$species}{'SPECIES_GROUP'} = $group;
-            last;
-          }
-        }
-        
-        last if $self->tree->{$species}{'SPECIES_GROUP'};
-      }
-    } else {
-      ## Default to same name as database 
-      $species   = $self->{'_species'};
-      ($bioname  = $species) =~ s/_/ /g;
-      ($bioshort = $bioname) =~ s/^([A-Z])[a-z]+_([a-z]+)$/$1.$2/;
-    }
-    
-    $self->tree->{$species}{'SPECIES_BIO_NAME'}  = $bioname;
-    $self->tree->{$species}{'SPECIES_BIO_SHORT'} = $bioshort;
-    
-    if ($self->tree->{'ENSEMBL_SPECIES'}) {
-      push @{$self->tree->{'DB_SPECIES'}}, $species;
-    } else {
-      $self->tree->{'DB_SPECIES'} = [ $species ];
-    }
-
-    ## Get assembly info 
-    while (my ($meta_key, $key) = each (%keys)) {
-      next unless $meta_hash->{$meta_key};
-      
-      my $value = scalar @{$meta_hash->{$meta_key}} > 1 ? $meta_hash->{$meta_key} : $meta_hash->{$meta_key}[0]; 
-      $self->tree->{$species}{$key} = $value;
-    }
-    
-    $self->tree->{$species}{'SPECIES_META_ID'} = $species_id;
-
-    ## Munge genebuild info
-    my @A = split '-', $meta_hash->{'genebuild.start_date'}[0];
-    
-    $self->tree->{$species}{'GENEBUILD_START'} = $A[1] ? "$months[$A[1]] $A[0]" : undef;
-    $self->tree->{$species}{'GENEBUILD_BY'}    = $A[2];
-
-    @A = split '-', $meta_hash->{'genebuild.initial_release_date'}[0];
-    
-    $self->tree->{$species}{'GENEBUILD_RELEASE'} = $A[1] ? "$months[$A[1]] $A[0]" : undef;
-    
-    @A = split '-', $meta_hash->{'genebuild.last_geneset_update'}[0];
-
-    $self->tree->{$species}{'GENEBUILD_LATEST'} = $A[1] ? "$months[$A[1]] $A[0]" : undef;
-    
-    @A = split '-', $meta_hash->{'assembly.date'}[0];
-    
-    $self->tree->{$species}{'ASSEMBLY_DATE'} = $A[1] ? "$months[$A[1]] $A[0]" : undef;
-    
-    # check if there are sample search entries defined in meta table ( the case with Ensembl Genomes)
-    # they can be overwritten at a later stage  via INI files
-    my @ks = grep { /^sample\./ } keys %{$meta_hash || {}};
-    my $shash;
-
-    foreach my $k (@ks) {
-      (my $k1 = $k) =~ s/^sample\.//;
-      $shash->{uc $k1} = $meta_hash->{$k}->[0];
-    }
-    
-    $self->tree->{$species}{'SAMPLE_DATA'} = $shash if $shash;
-
-    # check if the karyotype/list of toplevel regions ( normally chroosomes) is defined in meta table
-    @{$self->tree($species)->{'TOPLEVEL_REGIONS'}} = @{$meta_hash->{'regions.toplevel'}} if $meta_hash->{'regions.toplevel'};
-    @{$self->tree($species)->{'ENSEMBL_CHROMOSOMES'}} = @{$meta_hash->{'region.toplevel'}} if $meta_hash->{'region.toplevel'};
-  }
-}
-
 sub _munge_meta {
   my $self = shift;
 
@@ -714,7 +585,22 @@ sub _munge_meta {
     $self->tree($species)->{'SPECIES_DATASET'} = $group_name;
     $self->tree->{$species}{'SPECIES_DATASET'} = $group_name;
 
-   }
+  }
+
+  #  munge EG genome info
+  my $metadata_db = $self->full_tree->{MULTI}->{databases}->{DATABASE_METADATA};
+  if ($metadata_db) {
+    my $genome_info_adaptor = EnsEMBL::Web::DBSQL::MetaDataAdaptor->new( $metadata_db )->genome_info_adaptor;
+    if ($genome_info_adaptor) {
+      my $dbname = $self->tree->{databases}->{DATABASE_CORE}->{NAME};
+      $dbname =~ s/23_76/22_75/;
+      foreach my $genome (@{ $genome_info_adaptor->fetch_all_by_dbname($dbname) }) {
+        my $species = $genome->species;
+        $self->tree->{$species}->{'SEROTYPE'}     = $genome->serotype;
+        $self->tree->{$species}->{'PUBLICATIONS'} = $genome->publications;
+      }
+    }
+  } 
 }
 
 sub _configure_blast {
