@@ -23,6 +23,8 @@ use strict;
 use EnsEMBL::Web::Root;
 use EnsEMBL::Web::Data::Session;
 
+use Compress::Zlib;
+
 use base qw(EnsEMBL::Web::Command);
 
 sub process {
@@ -37,7 +39,7 @@ sub process {
   my $data = {
     type   => 'genefamilyfilter', 
     code   => $hub->data_species . '_' . $gene_family_id,
-    filter => join(',', @species),
+    filter => compress( join(',', @species) ),
   };
 
   $session->add_data(%$data);

@@ -23,6 +23,7 @@ use EnsEMBL::Web::TaxonTree;
 use Storable qw(lock_retrieve lock_nstore);
 use JSON qw(from_json to_json);
 use Data::Dumper;
+use Compress::Zlib;
 
 sub gene_family_dynatree_js {
   
@@ -49,7 +50,7 @@ sub gene_family_dynatree_js {
   # fetch selected species from session
   my @selected_species;
   if (my $data = $hub->session->get_data(type => 'genefamilyfilter', code => $hub->data_species . '_' . $gene_family_id )) {
-    @selected_species = split /,/, $data->{filter};
+    @selected_species = split /,/, uncompress( $data->{filter} );
   }
   
   # generate js with species selected and expanded

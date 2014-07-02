@@ -44,10 +44,10 @@ sub content {
   my $html;
   
   my $member;
-  eval { $member = $member_adaptor->fetch_by_source_stable_id('ENSEMBLGENE', $gene_stable_id)->get_all_SeqMembers->[0] };
+  eval { $member = $member_adaptor->fetch_by_stable_id($gene_stable_id)->get_all_SeqMembers->[0] };
     
   my $families = [];
-  $families = $family_adaptor->fetch_all_by_Member($member) if $member;
+  $families = $family_adaptor->fetch_by_SeqMember($member) if $member;
   return "<p>There are no gene families for this gene</p>" unless $member and @$families;
  
   unless ($gene_family_id) {
@@ -72,10 +72,10 @@ sub content {
     
     $html .= sprintf (
       qq{
-        <div style="width: 330px; float:right; text-align: right">
+        <div style="width: 330px; float:right; text-align: right;white">
           <form name="gene_family_form" method="get">
             %s
-            <b>Change gene family:</b> 
+            <b>Gene family</b> 
             <select name="gene_family_id">
               %s
             </select>
@@ -116,7 +116,7 @@ sub content {
   my $table = $self->new_table(
     [
       { key => 'id',          title => 'Gene stable ID', width => '15%', align => 'left', sort => 'html'   },
-      { key => 'name',        title => 'Name',      width => '10%', align => 'left', sort => 'html'   },
+      { key => 'name',        title => 'Name',           width => '10%', align => 'left', sort => 'html'   },
       { key => 'description', title => 'Description',    width => '25%', align => 'left', sort => 'string' },
       { key => 'taxon_id',    title => 'Taxon ID',       width => '10%', align => 'left', sort => 'string' },
       { key => 'species',     title => "Species",        width => '40%', align => 'left', sort => 'html'   },
@@ -129,19 +129,20 @@ sub content {
       data_table_config => { iDisplayLength => 25, aLengthMenu => [[25, 50, 100, -1], [25, 50, 100, "All"]] },
     }
   );
-    
+  
   foreach my $member (@{$data->{members}}) {
-    my $gene_url = $hub->url({ type => 'Gene', action => 'Summary', g => $member->{id}, species => $member->{species} });
-        
+    #my $species_path = $species_defs->species_path($member->{species});  ### Too slow with 16,000 members!!
+    my $species_path = '/' . $member->{species};
+
     $table->add_row({
-      id          => sprintf('<a href="%s">%s</a>', $gene_url, $member->{id}),
+      id          => '<a href="' . $species_path. '/Gene/Summary?db=core;g=' . $member->{id} . '">' . $member->{id} . '</a>',
       name        => $member->{name},
       taxon_id    => $member->{taxon_id},
       description => $member->{description},
-      species     => sprintf('<a href="%s">%s</a>', $species_defs->species_path($member->{species}), $species_defs->species_display_label($member->{species}))
+      species     => '<a href="' . $species_path . '">' . $species_defs->species_display_label($member->{species}) . '</a>',
     });
   }
-    
+   
   return $html . $table->render;
 }
 

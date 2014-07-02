@@ -23,6 +23,7 @@ use warnings;
 no warnings "uninitialized";
 use JSON;
 use EnsEMBL::Web::TmpFile::Text;
+use Compress::Zlib;
 
 use previous qw(availability);
 
@@ -50,15 +51,28 @@ sub filtered_family_data {
    
   if ($temp_file->exists) {
     $members = from_json($temp_file->content);
-  } else {      
+  } else {
     my $member_objs = $family->get_all_Members;
-    while (my $member = shift @$member_objs) {
-      my $gene_member = $member->gene_member;
+
+    # API too slow, use raw SQL to get name and desc for all genes   
+    my $gene_info = $self->database('compara')->dbc->db_handle->selectall_hashref(
+      'SELECT g.gene_member_id, g.display_label, g.description FROM family f 
+       JOIN family_member fm USING (family_id) 
+       JOIN seq_member s USING (seq_member_id) 
+       JOIN gene_member g USING (gene_member_id) 
+       WHERE f.stable_id = ?',
+      'gene_member_id',
+      undef,
+      $family_id
+    );
+
+    foreach my $member (@$member_objs) {
+      my $gene = $gene_info->{$member->gene_member_id};
       push (@$members, {
-        name        => $gene_member->display_label,
+        name        => $gene->{display_label},
         id          => $member->stable_id,
         taxon_id    => $member->taxon_id,
-        description => $gene_member->description,
+        description => $gene->{description},
         species     => $member->genome_db->name
       });  
     }
@@ -75,7 +89,7 @@ sub filtered_family_data {
  
   my @filter_species;
   if (my $filter = $hub->session->get_data(type => 'genefamilyfilter', code => $hub->data_species . '_' . $family_id )) {
-    @filter_species = split /,/, $filter->{filter};
+    @filter_species = split /,/, uncompress( $filter->{filter} );
   }
     
   if (@filter_species) {
