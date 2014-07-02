@@ -41,9 +41,9 @@ sub update_conf {
     map {delete($SiteDefs::__species_aliases{$_}) } keys %SiteDefs::__species_aliases;
   
     $SiteDefs::ENSEMBL_DATASETS = [];
-    #push (@{$SiteDefs::ENSEMBL_DATASETS}, "bacteria_$_") foreach (1..45);
- 
-    $SiteDefs::ENSEMBL_DATASETS = ['bacteria_1', 'bacteria_10', 'bacteria_22'];
+    push (@{$SiteDefs::ENSEMBL_DATASETS}, "bacteria_$_") foreach (1..62);
+
+    $SiteDefs::ENSEMBL_DATASETS = ['bacteria_1', 'bacteria_10', 'bacteria_18', 'bacteria_22'];
     
     $SiteDefs::ENSEMBL_PRIMARY_SPECIES = 'escherichia_coli_str_k_12_substr_mg1655'; 
     $SiteDefs::__species_aliases{ 'escherichia_coli_str_k_12_substr_mg1655'       } = [qw(bc)];
