@@ -43,11 +43,11 @@ sub content {
   my $family_adaptor = $compara_db->get_FamilyAdaptor;
   my $html;
   
-  my $member;
-  eval { $member = $member_adaptor->fetch_by_stable_id($gene_stable_id)->get_all_SeqMembers->[0] };
+  
+  my $member = $member_adaptor->fetch_by_stable_id($gene_stable_id);
     
   my $families = [];
-  $families = $family_adaptor->fetch_by_SeqMember($member) if $member;
+  $families = $family_adaptor->fetch_all_by_GeneMember($member) if $member;
   return "<p>There are no gene families for this gene</p>" unless $member and @$families;
  
   unless ($gene_family_id) {
