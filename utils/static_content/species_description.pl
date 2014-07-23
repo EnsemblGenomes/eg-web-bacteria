@@ -136,26 +136,22 @@ foreach my $dataset (@ARGV ? @ARGV : @$SiteDefs::ENSEMBL_DATASETS) {
     # Sample code
     
     $html .= "<h3>Ensembl Genomes API Example</h3>\n";
-    $html .= "<p>This example Perl script shows how to create a database adaptor for this species. For more information see the <a href=\"/info/data/accessing_ensembl_bacteria.html\">Ensembl Bacteria documentation</a>.</p>";
+    $html .= "<p>This example Perl script shows how to create a database adaptor for this species. For more information see the <a href=\"http://ensemblgenomes.org/info/access/eg_api\">Ensembl Bacteria documentation</a>.</p>";
     $html .= sprintf(
       q|<pre class="code">
-#!/usr/bin/env perl
-use strict;
-use warnings;
-
-use Bio::EnsEMBL::LookUp;
-
-# load the lookup from the main Ensembl Bacteria public server
-my $lookup = Bio::EnsEMBL::LookUp->new(
-  -URL => "http://bacteria.ensembl.org/registry.json",
-  -NO_CACHE => 1
-);
-
-# find the correct database adaptor using a unique name
-my ($dba) = @{$lookup->get_by_name_exact(
-  '%s'
-)};
-
+#!/usr/bin/env perl                                                                                                                                                                                                                         
+use strict;                                                                                                                                                                                                                                 
+use warnings;                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                              
+use Bio::EnsEMBL::LookUp;                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                              
+# load the lookup from the main Ensembl Bacteria public server                                                                                                                                                                              
+my $lookup = Bio::EnsEMBL::LookUp->new();                                                                                                                                                                                                   
+                                                                                                                                                                                                                                              
+# find the correct database adaptor using a unique name                                                                                                                                                                                     
+my $dba = $lookup->get_by_name_exact(                                                                                                                                                                                                       
+  '%s');
+ 
 # now work with the database adaptor as for any Ensembl database
 </pre>|,
       $production_name
