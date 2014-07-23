@@ -22,17 +22,12 @@ use LWP::Simple;
 use XML::Simple;
 use Time::HiRes;
 
-BEGIN {
-  my $serverroot = "$Bin/../../../../";
-  unshift @INC, "$serverroot/conf", $serverroot;
-  
-  require SiteDefs;
-  
-  unshift @INC, $_ for @SiteDefs::ENSEMBL_LIB_DIRS;
+use lib "$Bin/../../../eg-web-common/utils";
+use LibDirs;
 
-  require EnsEMBL::Web::DBSQL::DBAdaptor;
-  require EnsEMBL::Web::Hub;  
-}
+use SiteDefs;
+use EnsEMBL::Web::DBSQL::DBAdaptor;
+use EnsEMBL::Web::Hub;
 
 my $hub = new EnsEMBL::Web::Hub;
 
