@@ -163,42 +163,62 @@ sub content {
       $has_features = 1  if ($feature_set && @$feature_set);
     }
 
-    if($has_features) { 
+    my $feature_display_name = {
+      'Xref'                => 'External Reference',
+      'ProbeFeature'        => 'Oligoprobe',
+      'DnaAlignFeature'     => 'Sequence Feature',
+      'ProteinAlignFeature' => 'Protein Feature',
+    };
+    my ($xref_type, $xref_name);
+    while (my ($type, $feature_set) = each (%$features)) {    
+      if ($type eq 'Xref') {
+        my $sample = $feature_set->[0][0];
+        $xref_type = $sample->{'label'};
+        $xref_name = $sample->{'extname'};
+        $xref_name =~ s/ \[#\]//;
+        $xref_name =~ s/^ //;
+      }
+    }
 
-       my $text      = 'Locations of ';
-       my %names     = map { $_ => lc($_) . 's' } keys %$features;
-       my @A         = keys %names;
-       my $feature_names;
-
-       if (@A == 1 && $A[0] eq $data_type) {
-          $text .= $data_type;
-       } else {
-          if (scalar keys %names == 2) {
-            $feature_names = join ' and ', sort values %names;
-          } else {
-            $feature_names = join ', ', sort values %names;
+    if ($has_features) { 
+      unless ($hub->param('ph')) { ## omit h3 header for phenotypes
+        my $title = 'Locations';
+        $title .= ' of ';
+        my ($data_type, $assoc_name);
+        my $ftype = $hub->param('ftype');
+        if (grep (/$ftype/, keys %$features)) {
+          $data_type = $ftype;
+        }
+        else {
+          my @A = sort keys %$features;
+          $data_type = $A[0];
+          $assoc_name = $hub->param('name');
+          unless ($assoc_name) {
+            $assoc_name = $xref_type.' ';
+            $assoc_name .= $id;
+            $assoc_name .= " ($xref_name)" if $xref_name;
           }
+        }
 
-          $text .= "$feature_names associated with $data_type";
+        my %names;
+        ## De-camelcase names
+        foreach (sort keys %$features) {
+          my $pretty = $feature_display_name->{$_} || $self->decamel($_);
+          $pretty .= 's';
+          $names{$_} = $pretty;
+        }
 
-          my @ids = $hub->param('id');
-
-          if (@ids) {
-            if (@ids > 1) {
-              $text .= 's ' . join ', ', @ids;
-            } else {
-              $text .= ' ' . $ids[0];
-            }
-          }
-
-          if ($hub->param('ftype') eq 'Phenotype'){
-            my $phenotype_name = encode_entities($hub->param('phenotype_name') || $hub->param('id'));
-            $text .= "Location of variants associated with phenotype $phenotype_name:";
-          }
-       }
-
-       $html .= "<h2>$text</h2>" unless $names{'LRG'};
-    } 
+        my @feat_names = sort values %names;
+        my $last_name = pop(@feat_names);
+        if (scalar @feat_names > 0) {
+          $title .= join ', ', @feat_names;
+          $title .= ' and ';
+        }
+        $title .= $last_name;
+        $title .= " associated with $assoc_name" if $assoc_name;
+        $html .= "<h3>$title</h3>" if $title;  
+      }
+    }
    
     $html .= $self->feature_karyotypes(\@all_features, $data_type);
     $html .= $self->feature_tables(\@all_features);
