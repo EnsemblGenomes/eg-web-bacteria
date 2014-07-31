@@ -88,12 +88,12 @@ sub content {
     my $xref_id   = $gene->display_xref ? $gene->display_xref->display_id : '-novel-';
     my $stable_id = $gene->stable_id;
     
-    $row->{'id'} = sprintf '<a href="%s">%s</a><br />(%s)', $hub->url({ type => 'Gene', action => 'Summery', g => $stable_id }), $stable_id, $xref_id;
+    $row->{'id'} = sprintf '<a href="%s">%s</a><br />(%s)', $hub->url({ type => 'Gene', action => 'Summary', g => $stable_id }), $stable_id, $xref_id;
 
     my $readable_location = sprintf(
       '%s: %s',
       $self->neat_sr_name($gene->slice->coord_system->name, $gene->slice->seq_region_name),
-      $self->round_bp($gene->start)
+      $gene->start
     );
     
     $row->{'loc'}= sprintf '<a href="%s">%s</a>', $hub->url({ type => 'Location', action => 'View', g => $stable_id, __clear => 1}), $readable_location;
