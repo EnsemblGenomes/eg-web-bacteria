@@ -130,8 +130,7 @@ sub fetch_homology_species_hash {
   
   $self->timer_push('starting to fetch', 6);
 
-  my $member_adaptor = $database->get_MemberAdaptor;
-  my $query_member   = $member_adaptor->fetch_by_source_stable_id('ENSEMBLGENE', $geneid);
+  my $query_member   = $database->get_GeneMemberAdaptor->fetch_by_source_stable_id('ENSEMBLGENE', $geneid);
 
   return {} unless defined $query_member;
   
@@ -182,7 +181,7 @@ sub fetch_homology_species_hash {
     # There should be a way of retrieving this name correctly instead.
 #    push @{$homologues{ucfirst $genome_db_name}}, [ $target_member, $homology->description, $homology->subtype, $query_perc_id, $target_perc_id, $dnds_ratio, $homology->ancestor_node_id];
 ## EG : we don;t need this hack
-    push @{$homologues{$genome_db_name}}, [ $target_member, $homology->description, $homology->subtype, $query_perc_id, $target_perc_id, $dnds_ratio, $homology->ancestor_node_id];
+    push @{$homologues{$genome_db_name}}, [ $target_member, $homology->description, $homology->taxonomy_level, $query_perc_id, $target_perc_id, $dnds_ratio, $homology->{_gene_tree_node_id}]
   }
   
   $self->timer_push('homologies hacked', 6);
