@@ -109,6 +109,7 @@ sub content {
       $hub->species_path($hub->data_species) . "/Gene/Gene_families/SaveFilter?gene_family_id=$gene_family_id;redirect=" . uri_escape($hub->url)
     );
   }
+  $html .= sprintf '<a class="fbutton" target="_blank" href="%s">Download protein sequences</a> ', $hub->url({ action => 'Gene_families', function => 'Sequence', _format => 'Text' });
   $html .= '</p>';
 
   # member table

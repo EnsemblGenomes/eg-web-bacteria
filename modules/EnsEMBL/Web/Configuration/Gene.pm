@@ -35,10 +35,13 @@ sub modify_tree {
       )],
     { 'availability' => 'gene database:compara', 'concise' => 'Gene families' }
   );
-
   $self->create_node( 'Gene_families/SaveFilter', '',
-    [], { 'availability' => 1, 'no_menu_entry' => 1,
+    [], { 'availability' => 'gene database:compara', 'no_menu_entry' => 1,
     'command' => 'EnsEMBL::Web::Command::GeneFamily::SaveFilter'}
+  );
+  $self->create_node( 'Gene_families/Sequence', '',
+    [qw( alignment EnsEMBL::Web::Component::Gene::GeneFamilySeq )],
+    { 'availability' => 'gene database:compara', 'no_menu_entry' => 1 }
   );
   
   $sequence->after($gene_families);
