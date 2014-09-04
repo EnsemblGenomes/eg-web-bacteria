@@ -34,35 +34,39 @@ sub _init {
 }
 
 sub content {
-  my $self           = shift;
-  my $hub            = $self->hub;
-  my $species_defs   = $hub->species_defs;
-  my $gene_family_id = $hub->param('gene_family_id');
-  my $format         = $hub->param('_format');  
-  my $object         = $self->object;
-  my $gene_stable_id = $object->stable_id;
-  my $compara_db     = $object->database('compara');
-  my $family_adaptor = $compara_db->get_FamilyAdaptor;
-  my $family         = $family_adaptor->fetch_by_stable_id($gene_family_id);
-  my @all_members    = @{ $family->get_all_Members };
-  my $filtered_data  = $object->filtered_family_data($family);
-  my %filtered_id    = map {$_->{id} => 1} @{$filtered_data->{members}};
+  my $self             = shift;
+  my $hub              = $self->hub;
+  my $species_defs     = $hub->species_defs;
+  my $gene_family_id   = $hub->param('gene_family_id');
+  my $format           = $hub->param('_format');  
+  my $object           = $self->object;
+  my $gene_stable_id   = $object->stable_id;
+  my $compara_db       = $object->database('compara');
+  my $family_adaptor   = $compara_db->get_FamilyAdaptor;
+  my $family           = $family_adaptor->fetch_by_stable_id($gene_family_id);
+  my @all_members      = @{ $family->get_all_Members };
+  my $filtered_data    = $object->filtered_family_data($family);
+  my %filtered_members = map {$_->{id} => $_} @{$filtered_data->{members}};
   my $html = '';
 
   foreach my $member (@all_members) {
-    my $member_id = $member->stable_id;
-    next unless $filtered_id{$member_id};
-    
+    my $member_id   = $member->stable_id;
+    my $member_data = $filtered_members{$member_id};
+    next unless $member_data;
+
     my $sequence = $member->sequence;
     next unless $sequence;
 
+    my $title = join ', ', $member_id, $species_defs->species_display_label($member->{species}), $member_data->{description};
+    $title   .= ", (gene=$member_data->{name})" if $member_data->{name};
+
     if($format =~ /^text$/i){
       $sequence =~ s/(.{60})/$1\n/g;
-      $html .= sprintf(">%s\n%s\n\n", $member_id, $sequence); 
+      $html .= sprintf(">%s\n%s\n\n", $title, $sequence); 
     }
     else{
       $sequence =~ s/(.{60})/$1<\/br>/g;
-      $html .= sprintf('<pre><em>>%s</em></br>%s</pre>', $member_id, $sequence); 
+      $html .= sprintf('<pre><em>>%s</em></br>%s</pre>', $title, $sequence); 
     }
   }
   
