@@ -58,7 +58,7 @@ sub content {
     next unless $sequence;
 
     my $title = join ', ', $member_id, $species_defs->species_display_label($member_data->{species}), $member_data->{description};
-    $title   .= ", (gene=$member_data->{name})" if $member_data->{name};
+    $title   .= " (gene=$member_data->{name})" if $member_data->{name};
 
     if($format =~ /^text$/i){
       $sequence =~ s/(.{60})/$1\n/g;
