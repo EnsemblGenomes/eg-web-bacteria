@@ -41,7 +41,7 @@ sub update_conf {
     map {delete($SiteDefs::__species_aliases{$_}) } keys %SiteDefs::__species_aliases;
   
     $SiteDefs::ENSEMBL_DATASETS = [];
-    push (@{$SiteDefs::ENSEMBL_DATASETS}, "bacteria_$_") foreach (1..62);
+    push (@{$SiteDefs::ENSEMBL_DATASETS}, "bacteria_$_") foreach (1..84);
 
     #$SiteDefs::ENSEMBL_DATASETS = ['bacteria_1', 'bacteria_10', 'bacteria_18', 'bacteria_22'];
     
