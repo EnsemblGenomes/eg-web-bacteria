@@ -33,7 +33,11 @@ sub content {
   if ($self->hub->species_defs->ENSEMBL_ENASEARCH_ENABLED) {
       push @links,   '<a class="constant" href="/Multi/enasearch">Sequence Search</a>';
   }
-  push @links, qq{<a class="constant" href="/$species/blastview">BLAST</a>} if $self->blast;
+
+  if ($self->hub->species_defs->ENSEMBL_BLAST_ENABLED) {
+      push @links, qq{<a class="constant" href="/$species/blastview">BLAST</a>}
+  }
+
 ###
   push @links,   '<a class="constant" href="/tools.html">Tools</a>';
   push @links,   '<a class="constant" href="/downloads.html">Downloads</a>';
