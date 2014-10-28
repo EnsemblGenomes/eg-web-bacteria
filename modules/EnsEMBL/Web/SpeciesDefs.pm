@@ -17,6 +17,11 @@ limitations under the License.
 =cut
 
 package EnsEMBL::Web::SpeciesDefs;
+#use strict;
+#use warnings;
+
+#our $CONF;
+use Data::Dumper;
 
 sub species_label {
   my ($self, $key, $no_formatting) = @_;
@@ -163,21 +168,26 @@ sub _parse {
   }
 
   foreach my $db (@$SiteDefs::ENSEMBL_DATASETS ) {
-      my @species = @{$tree->{$db}->{DB_SPECIES}};
+    my @species = @{$tree->{$db}->{DB_SPECIES}};
+    my $species_lookup = { map {$_ => 1} @species };
 
-      foreach my $sp (@species) {
-          $self->_merge_species_tree( $tree->{$sp}, $tree->{$db} );
-      }
+    foreach my $sp (@species) {
+        $self->_merge_species_tree( $tree->{$sp}, $tree->{$db}, $species_lookup);
+    }
   }
 
   $CONF->{'_storage'} = $tree; # Store the tree
 }
 
 sub _merge_species_tree {
-    my ($self, $a, $b, $m) = @_;
-    foreach my $key (keys %$b) {
-        $a->{$key} = $b->{$key} unless exists $a->{$key};
-    }
+  my ($self, $a, $b, $species_lookup) = @_;
+
+  foreach my $key (keys %$b) {
+## EG - don't bloat the configs with references to all the other speices in this dataset    
+      next if $species_lookup->{$key}; 
+##      
+      $a->{$key} = $b->{$key} unless exists $a->{$key};
+  }
 }
 
 
