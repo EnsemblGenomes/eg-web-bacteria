@@ -33,7 +33,7 @@ sub _init {
   $self->{action}          = $hub->species_path($hub->data_species) . '/Gene/Gene_families/SaveFilter'; 
   $self->{method}          = 'post';
   $self->{extra_params}    = { gene_family_id => $gene_family_id };  
-  $self->{link_text}       = 'Filter gene family';
+  $self->{link_text}       = '';
   $self->{data_url}        = sprintf '/%s/Ajax/gene_family_dynatree_js?gene_family_id=%s', $hub->species, $gene_family_id;
   $self->{entry_node}      = $hub->data_species;
   $self->{redirect}        = $hub->url({ function => 'Gene_families', gene_family_id => $gene_family_id }, 0, 1); 
