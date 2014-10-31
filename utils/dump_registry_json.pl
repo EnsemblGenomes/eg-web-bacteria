@@ -25,7 +25,7 @@ use LibDirs;
 use lib "$LibDirs::SERVERROOT/ensemblgenomes-api/modules";
 use lib "$LibDirs::SERVERROOT/eg-web-bacteria/modules";
 
-use Bio::EnsEMBL::LookUp;
+use Bio::EnsEMBL::LookUp::LocalLookUp;
 
 my ($host, $port, $user, $pass);
 my $file = "$Bin/../htdocs/registry.json";
@@ -40,11 +40,11 @@ GetOptions(
                                     
 print "registering dbs...\n";
 
-Bio::EnsEMBL::LookUp->register_all_dbs($host, $port, $user, $pass);
+Bio::EnsEMBL::LookUp::LocalLookUp->register_all_dbs($host, $port, $user, $pass);
 
 print "writing $file...\n";
 
-my $helper = Bio::EnsEMBL::LookUp->new(-NO_CACHE => 1);
+my $helper = Bio::EnsEMBL::LookUp::LocalLookUp->new(-NO_CACHE => 1);
 $helper->write_registry_to_file($file);
 
 print "done\n";
@@ -56,7 +56,7 @@ print "done\n";
 # We do this so that we can dump from an internal server before the data is
 # available to the publuc, but still have public-ready output.
 
-package Bio::EnsEMBL::LookUp;
+package Bio::EnsEMBL::LookUp::LocalLookUp;
 use strict;
 use warnings;
 
