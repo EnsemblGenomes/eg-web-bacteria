@@ -99,7 +99,6 @@ Ensembl.Panel.ImageMap =  Ensembl.Panel.ImageMap.extend({
    *          (eg AlignSlice or whole chromosome), highlighting is taken from the r parameter in the url.
    */
   highlightImage: function (imageNumber, speciesNumber, start, end) {
-    console.log('highlightImage', arguments);
     // Make sure each image is highlighted based only on itself or the next image on the page
     if (!this.draggables.length || this.vdrag || imageNumber - this.imageNumber > 1 || imageNumber - this.imageNumber < 0) {
       return;
