@@ -26,9 +26,10 @@ use warnings;
 
 use ORM::EnsEMBL::Utils::Helper qw(random_string);
 
-use base qw(ORM::EnsEMBL::DB::Accounts::Object);
+use parent qw(ORM::EnsEMBL::DB::Accounts::Object);
 
 my $VIRTUAL_COLUMNS = {
+  'annotation'        => [qw(annotation stable_id title ftype species)],
   'history'           => [qw(object value url name species param)],
   'bookmark'          => [qw(name description url object click)],
   'specieslist'       => [qw(favourites list)],
