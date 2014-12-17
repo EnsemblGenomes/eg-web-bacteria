@@ -245,6 +245,8 @@ sub _summarise_core_tables {
 
   }
 
+$self->db_tree->{'ASSEMBLY_VERSION'} = ''; # must be non-null for BLAST ticket ORM
+
 ## EG - it doesn't *look* like this is still needed, so I've dropped it to help slim down
 ##      Bacteria's bloated configs
 # #---------------
