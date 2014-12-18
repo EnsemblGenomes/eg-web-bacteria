@@ -49,6 +49,12 @@ foreach my $dataset (@ARGV ? @ARGV : @$SiteDefs::ENSEMBL_DATASETS) {
   
   while (my $id = $sth->fetchrow_array) {
     next unless my $production_name = get_meta_value($adaptor, $id, 'species.production_name');
+
+    my $filename = "$dir/about_${production_name}.html";
+    if (-e $filename) {
+      print "Skipping, $filename already exists\n";
+      next;
+    }
        
     my $name = get_meta_value($adaptor, $id, 'species.scientific_name');
     my $taxid = get_meta_value($adaptor, $id, 'species.taxonomy_id');         
@@ -154,7 +160,6 @@ my $dba = $lookup->get_by_name_exact(
     
     $html = qq{<div class="species_description">\n$html</div>\n};
      
-    my $filename = "$dir/about_${production_name}.html";
     open(my $fh, '>', "$filename") or die $!;
     print $fh $html;
     close($fh);
