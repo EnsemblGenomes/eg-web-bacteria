@@ -28,14 +28,11 @@ sub update_conf {
 
     $SiteDefs::ENSEMBL_PORT           = 8002;
     $SiteDefs::ENSEMBL_SERVERNAME     = 'bacteria.ensembl.org';
-    $SiteDefs::EBEYE_FILTER_AUTOCOMPLETE = 1;
 
     $SiteDefs::SITE_NAME = 'Ensembl Bacteria';
     $SiteDefs::ENSEMBL_SITETYPE = 'Ensembl Bacteria';
     $SiteDefs::SITE_FTP= 'ftp://ftp.ensemblgenomes.org/pub/bacteria';
 
-    $SiteDefs::EBEYE_FILTER = 1;
-    $SiteDefs::EBEYE_FILTER_AUTOCOMPLETE = 1;
     $SiteDefs::DISABLE_SPECIES_DROPDOWN = 1;
 
     map {delete($SiteDefs::__species_aliases{$_}) } keys %SiteDefs::__species_aliases;
