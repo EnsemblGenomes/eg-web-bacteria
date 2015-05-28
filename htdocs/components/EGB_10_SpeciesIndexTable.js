@@ -1,4 +1,4 @@
-/* JavaScript for datatable on /info/about/species.html */
+/* JavaScript for datatable on /species.html */
 
 Ensembl.Panel.SpeciesIndexTable = Ensembl.Panel.extend({  
   init: function () {
