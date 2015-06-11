@@ -22,7 +22,7 @@ use strict;
 use warnings;
 no warnings qw(uninitialized);
 
-use EnsEMBL::Web::DBSQL::MetaDataAdaptor;
+use Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor;
 use Bio::EnsEMBL::ExternalData::DAS::SourceParser;
 use Data::Dumper;
 
@@ -592,16 +592,28 @@ sub _munge_meta {
 
   }
 
-  #  munge EG genome info
+  #  munge EG genome info 
   my $metadata_db = $self->full_tree->{MULTI}->{databases}->{DATABASE_METADATA};
+
   if ($metadata_db) {
-    my $genome_info_adaptor = EnsEMBL::Web::DBSQL::MetaDataAdaptor->new( $metadata_db )->genome_info_adaptor;
+   warn "got metadata_db $metadata_db";
+
+    my $dbc = Bio::EnsEMBL::DBSQL::DBConnection->new(
+      -USER   => $metadata_db->{USER},
+      -PASS   => $metadata_db->{PASS},
+      -PORT   => $metadata_db->{PORT},
+      -HOST   => $metadata_db->{HOST},
+      -DBNAME => $metadata_db->{NAME}
+    );
+
+    my $genome_info_adaptor = Bio::EnsEMBL::Utils::MetaData::DBSQL::GenomeInfoAdaptor->new(-DBC => $dbc);
+    
     if ($genome_info_adaptor) {
       my $dbname = $self->tree->{databases}->{DATABASE_CORE}->{NAME};
       foreach my $genome (@{ $genome_info_adaptor->fetch_all_by_dbname($dbname) }) {
         my $species = $genome->species;
-        $self->tree->{$species}->{'SEROTYPE'}     = $genome->serotype;
-        $self->tree->{$species}->{'PUBLICATIONS'} = $genome->publications;
+        $self->tree($species)->{'SEROTYPE'}     = $genome->serotype;
+        $self->tree($species)->{'PUBLICATIONS'} = $genome->publications;
       }
     }
   } 
