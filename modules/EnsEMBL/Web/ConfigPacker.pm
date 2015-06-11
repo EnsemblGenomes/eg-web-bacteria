@@ -596,8 +596,6 @@ sub _munge_meta {
   my $metadata_db = $self->full_tree->{MULTI}->{databases}->{DATABASE_METADATA};
 
   if ($metadata_db) {
-   warn "got metadata_db $metadata_db";
-
     my $dbc = Bio::EnsEMBL::DBSQL::DBConnection->new(
       -USER   => $metadata_db->{USER},
       -PASS   => $metadata_db->{PASS},
