@@ -36,8 +36,6 @@ sub content {
     { strand => 'r' }
   );
 
-  $self->_attach_das($image_config);
-
   $image_config->_update_missing($object);
 
   my $image = $self->new_image($slice, $image_config, $object->highlights);
