@@ -72,15 +72,6 @@ sub modify_tree {
 
      foreach my $oid (@clist) {
 	 my $cluster = $clusters{$oid};
-	 my $dbname = $cluster->{db};
-
-	 if ($dbname eq 'GO') {
-	     $dbname = 'GO|GO_to_gene';
-	 }
-	 my $go_hash  = $self->object ? $object->get_ontology_chart($dbname, $cluster->{root}) : {};
-	 next unless (%$go_hash);
-	 my @c = grep { $go_hash->{$_}->{selected} } keys %$go_hash;
-	 my $num = scalar(@c);
 	 
 	 my $url2 = $hub->url({
 	     type    => 'Gene',
@@ -89,7 +80,7 @@ sub modify_tree {
 			      });
 
 	 (my $desc2 = "$cluster->{db}: $cluster->{description}") =~ s/_/ /g;
-	 $go_menu->append($self->create_node('Ontology/'.$oid, "$desc2 ($num)",
+	 $go_menu->append($self->create_node('Ontology/'.$oid, "$desc2",
 					     [qw( go EnsEMBL::Web::Component::Gene::Ontology )],
 					     { 'availability' => 'gene', 'concise' => $desc2, 'url' =>  $url2 }
 			  ));
@@ -127,7 +118,7 @@ sub modify_tree {
   $pancompara_menu->append( $tree_node );  
 
   my $ol_node = $self->create_node(
-    'Compara_Ortholog/pan_compara',   "Orthologues ([[counts::orthologs_pan]])",
+    'Compara_Ortholog/pan_compara',   "Orthologues",
     [qw(orthologues EnsEMBL::Web::Component::Gene::ComparaOrthologs)],
     { 'availability' => 'gene database:compara_pan_ensembl core has_orthologs_pan',
       'concise'      => 'Orthologues' }
@@ -145,7 +136,7 @@ sub modify_tree {
            { 'availability'  => 'gene database:compara core has_orthologs', 'no_menu_entry' => 1 }
            ));
   my $pl_node = $self->create_node(
-    'Compara_Paralog/pan_compara',    "Paralogues ([[counts::paralogs_pan]])",
+    'Compara_Paralog/pan_compara',    "Paralogues",
     [qw(paralogues  EnsEMBL::Web::Component::Gene::ComparaParalogs)],
     { 'availability' => 'gene database:compara_pan_ensembl core has_paralogs_pan',
            'concise' => 'Paralogues' }
@@ -158,7 +149,7 @@ sub modify_tree {
       'no_menu_entry' => 1 }
   ));
   my $fam_node = $self->create_node(
-    'Family/pan_compara', 'Protein families ([[counts::families_pan]])',
+    'Family/pan_compara', 'Protein families',
     [qw(family EnsEMBL::Web::Component::Gene::Family)],
     { 'availability' => 'family_pan_ensembl' , 'concise' => 'Protein families' }
   );
