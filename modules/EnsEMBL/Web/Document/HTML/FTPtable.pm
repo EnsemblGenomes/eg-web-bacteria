@@ -26,12 +26,15 @@ use warnings;
 use EnsEMBL::Web::Hub;
 use EnsEMBL::Web::DBSQL::WebsiteAdaptor;
 use base qw(EnsEMBL::Web::Document::HTML);
+use Data::Dumper;
+use EnsEMBL::Web::Document::Table;
 
 sub render {
   my $self = shift;
   my $hub             = new EnsEMBL::Web::Hub;
   my $species_defs    = $hub->species_defs;
   my $rel = $species_defs->SITE_RELEASE_VERSION;
+  my ($columns, $rows);
 
   my $species_ena = {};
   eval { # wrap in eval in case there is no species_search table
@@ -44,78 +47,113 @@ sub render {
   };
   warn "failed to get ENA records: $@" if $@; 
   
-  my $html = qq(
-<table class="ss tint" cellpadding="4">
-  <tr>
-    <th>Species</th>
-    <th colspan="10" style="text-align:center">Files</th>
-  </tr>
-  );
-  
+  $columns = [
+    { key => 'species', title => 'Species',                      align => 'left',   width => '20%', sort => 'html' },
+    { key => 'dna',     title => 'DNA (FASTA)',                  align => 'center', width => '10%', sort => 'none' },
+    { key => 'cdna',    title => 'cDNA (FASTA)',                 align => 'center', width => '10%', sort => 'none' },
+    { key => 'protseq', title => 'Protein sequence (FASTA)',     align => 'center', width => '10%', sort => 'none' },
+    { key => 'embl',    title => 'Annotated sequence (EMBL)',    align => 'center', width => '10%', sort => 'none' },
+    { key => 'mysql',   title => 'Whole databases',              align => 'center', width => '10%', sort => 'none' },
+    { key => 'gtf',   title => 'GTF',                            align => 'center', width => '10%', sort => 'none' },
+    { key => 'vep',    title => 'Variation (VEP)',               align => 'center', width => '10%', sort => 'none' },
+    { key => 'tsv',     title => 'TSV',                          align => 'center', width => '10%', sort => 'none' },
+  ];
+
+
+
   my @species = $species_defs->valid_species;
-  my $row = 0;
-  my $class;
-  foreach my $spp (sort @species) {
-    (my $sp_name = $spp) =~ s/_/ /;
-    
-    my $sp_dir             = lc($spp);
-    my $sp_var             = lc($spp) . '_variation';
-    my $sp_vep             = lc($spp) . "_vep_$rel.tar.gz";  
-    my $common             = $species_defs->get_config($spp, 'SPECIES_COMMON_NAME');
-    my $genomic_unit       = $species_defs->get_config($spp, 'GENOMIC_UNIT');
-    my $collection         = lc ($species_defs->get_config($spp, 'SPECIES_DATASET') . '_collection' );
-    my $ftp_base_path_stub = "ftp://ftp.ensemblgenomes.org/pub/release-$rel/$genomic_unit/";
-    my $db_name            = $species_defs->get_config($spp, 'databases')->{DATABASE_CORE}->{NAME};
-    my $assembly           = $species_defs->get_config($spp, 'ASSEMBLY_NAME');  
-    my $embl_link;
-    
-    if (my @ranges = $self->_ena_ranges($species_ena->{$spp})) {
-      if (@ranges == 1) {
-        $embl_link = $self->_ena_link($ranges[0], $assembly, 'EMBL');
-      } else {
-        my @links = map { $self->_ena_link($_, $assembly) } @ranges;
-        $embl_link = join '<br />', ('EMBL', @links);
-      }
-    } else {
-      $embl_link = '-';
-    }
-    
-    $class = $row % 2 == 0 ? 'bg1' : 'bg2';
 
-    $html .= qq(
-  <tr class="$class">
-    <td><strong><i>$sp_name</i></strong> ($common)</td>
-    <td><a rel="external" href="$ftp_base_path_stub/fasta/$collection/$sp_dir/dna/">FASTA</a> (DNA)</td>
-    <td><a rel="external" href="$ftp_base_path_stub/fasta/$collection/$sp_dir/cdna/">FASTA</a> (cDNA)</td>
-    <td><a rel="external" href="$ftp_base_path_stub/fasta/$collection/$sp_dir/pep/">FASTA</a> (protein)</td>
-    <td>$embl_link</td>
-    <td><a rel="external" href="$ftp_base_path_stub/mysql/$db_name">MySQL</a></td>
-    <td><a rel="external" href="$ftp_base_path_stub/gtf/$collection/$sp_dir">GTF</a></td>
-    <td><a rel="external" href="$ftp_base_path_stub/vep/$collection/$sp_vep">VEP</a></td>
-    <td><a rel="external" href="$ftp_base_path_stub/tsv/$collection/$sp_dir">TSV</a></td>
-  </tr>
-      );
-    $row++;
-  }
+foreach my $spp (sort @species) {
+   (my $sp_name = $spp) =~ s/_/ /;
 
-  $class = $class eq 'bg2' ? 'bg1' : 'bg2';
+   my $sp_dir             = lc($spp);
+   my $sp_var             = lc($spp) . '_variation';
+   my $sp_vep             = lc($spp) . "_vep_$rel.tar.gz";
+   my $common             = $species_defs->get_config($spp, 'SPECIES_COMMON_NAME');
+   my $genomic_unit       = $species_defs->get_config($spp, 'GENOMIC_UNIT');
+   my $collection         = lc ($species_defs->get_config($spp, 'SPECIES_DATASET') . '_collection' );
+   my $ftp_base_path_stub = "ftp://ftp.ensemblgenomes.org/pub/release-$rel/$genomic_unit/";
+   my $db_name            = $species_defs->get_config($spp, 'databases')->{DATABASE_CORE}->{NAME};
+   my $assembly           = $species_defs->get_config($spp, 'ASSEMBLY_NAME');
+   my $embl_link;
+  
+   if (my @ranges = $self->_ena_ranges($species_ena->{$spp})) {
+     if (@ranges == 1) {
+       $embl_link = $self->_ena_link($ranges[0], $assembly, 'EMBL');
+     } else {
+       my @links = map { $self->_ena_link($_, $assembly) } @ranges;
+       $embl_link = join '<br />', ('EMBL', @links);
+     }
+   } else {
+     $embl_link = '-';
+   }
 
-  $html .= qq(
-  <tr class="$class">
-    <td><strong>Pantaxonomic compara multi-species</strong></td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-    <td><a rel="external" href="ftp://ftp.ensemblgenomes.org/pub/pan_ensembl/release-$rel/mysql/">MySQL</a></td>
-    <td>-</td>
-    <td>-</td>
-    <td><a rel="external" href="ftp://ftp.ensemblgenomes.org/pub/pan_ensembl/release-$rel/tsv/">TSV</a></td>
-  </tr>
-</table>
-  );
 
-  return $html;
+    push @$rows, {
+      species => sprintf('<strong><i>%s</i></strong>', $common),
+      dna     => sprintf('<a rel="external" href="%s/fasta/%s/%s/dna/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
+      cdna    => sprintf('<a rel="external" href="%s/fasta/%s/%s/cdna/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
+      protseq => sprintf('<a rel="external" href="%s/fasta/%s/%s/pep/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
+      embl    => sprintf('%s',  $embl_link),
+      mysql   => sprintf('<a rel="external" href="%s/mysql/%s">MySQL</a>',  $ftp_base_path_stub, $db_name),
+      gtf    =>  sprintf('<a rel="external" href="%s/gtf/%s/%s/">GTF</a>',  $ftp_base_path_stub, $collection, $sp_dir),
+      vep    =>  sprintf('<a rel="external" href="%s/vep/%s/%s/">VEP</a>',  $ftp_base_path_stub, $collection, $sp_vep),
+      tsv    =>  sprintf('<a rel="external" href="%s/tsv/%s/%s/">TSV</a>',  $ftp_base_path_stub, $collection, $sp_dir),
+    };
+ }
+
+
+my $main_table           = EnsEMBL::Web::Document::Table->new($columns, $rows, { data_table => 1, exportable => 0 });
+  $main_table->code        = 'FTPtable::'.scalar(@$rows);
+  $main_table->{'options'}{'data_table_config'} = {iDisplayLength => 10};
+
+my $pantaxonomic_data = qq{<h2>Pantaxonomic compara multi-species</h2>
+    <p>
+      Pantaxonomic compara multi-species data on the genomes provided by Ensembl Genomes is available from the FTP site in the following formats.
+    </p>
+    <p>
+      Ensembl Genomes:
+      <a href="ftp://ftp.ensemblgenomes.org/pub/pan_ensembl/release-$rel/mysql/">MySQL</a> |
+      <a href="ftp://ftp.ensemblgenomes.org/pub/pan_ensembl/release-$rel/tsv/">TSV</a> |
+    </p>};
+
+
+
+ # $class = $class eq 'bg2' ? 'bg1' : 'bg2';
+
+ # $html .= qq(
+ # <tr class="$class">
+ #   <td><strong>Pantaxonomic compara multi-species</strong></td>
+ #   <td>-</td>
+ #   <td>-</td>
+ #   <td>-</td>
+ #   <td>-</td>
+ #   <td><a rel="external" href="ftp://ftp.ensemblgenomes.org/pub/pan_ensembl/release-$rel/mysql/">MySQL</a></td>
+ #   <td>-</td>
+ #   <td>-</td>
+ #   <td><a rel="external" href="ftp://ftp.ensemblgenomes.org/pub/pan_ensembl/release-$rel/tsv/">TSV</a></td>
+ # </tr>
+ #</table>
+ # );
+
+ # return $html;
+
+return sprintf(qq{<div class="js_panel">
+      <input type="hidden" class="panel_type" value="Content">
+      %s
+    </div>%s},$main_table->render, $pantaxonomic_data);
+}
+
+
+sub new_table {
+  my $self     = shift;
+  my $hub      = $self->hub;
+  my $table    = EnsEMBL::Web::Document::Table->new(@_);
+  my $options  = $_[2];
+  
+  $table->session    = $hub->session;
+ # print Dumper($table);
+  return $table;
 }
 
 sub _ena_ranges {
