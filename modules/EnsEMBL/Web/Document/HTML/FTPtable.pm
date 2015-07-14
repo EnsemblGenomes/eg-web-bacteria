@@ -26,7 +26,6 @@ use warnings;
 use EnsEMBL::Web::Hub;
 use EnsEMBL::Web::DBSQL::WebsiteAdaptor;
 use base qw(EnsEMBL::Web::Document::HTML);
-use Data::Dumper;
 use EnsEMBL::Web::Document::Table;
 
 sub render {
@@ -142,18 +141,6 @@ return sprintf(qq{<div class="js_panel">
       <input type="hidden" class="panel_type" value="Content">
       %s
     </div>%s},$main_table->render, $pantaxonomic_data);
-}
-
-
-sub new_table {
-  my $self     = shift;
-  my $hub      = $self->hub;
-  my $table    = EnsEMBL::Web::Document::Table->new(@_);
-  my $options  = $_[2];
-  
-  $table->session    = $hub->session;
- # print Dumper($table);
-  return $table;
 }
 
 sub _ena_ranges {
