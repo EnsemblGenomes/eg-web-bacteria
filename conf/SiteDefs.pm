@@ -34,6 +34,7 @@ sub update_conf {
     $SiteDefs::SITE_FTP= 'ftp://ftp.ensemblgenomes.org/pub/bacteria';
 
     $SiteDefs::DISABLE_SPECIES_DROPDOWN = 1;
+    $SiteDefs::LARGE_SPECIES_SET        = 1;
 
     map {delete($SiteDefs::__species_aliases{$_}) } keys %SiteDefs::__species_aliases;
   
