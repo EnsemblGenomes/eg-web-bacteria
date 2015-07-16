@@ -25,7 +25,7 @@ use JSON qw(from_json to_json);
 use Data::Dumper;
 use Compress::Zlib;
 
-sub gene_family_dynatree_js {
+sub ajax_gene_family_dynatree_js {
   
   my ($self, $hub) = @_;
   my $gene_family_id = $hub->param('gene_family_id');
@@ -60,7 +60,7 @@ sub gene_family_dynatree_js {
   print $js;
 }
 
-sub species_list {
+sub ajax_species_list {
   my ($self, $hub) = @_;
   my $species_defs   = $hub->species_defs;
   my $pan_compara    = $species_defs->get_config('MULTI', 'DATABASE_COMPARA_PAN_ENSEMBL');
