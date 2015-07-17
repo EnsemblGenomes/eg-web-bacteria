@@ -39,7 +39,7 @@ Ensembl.Panel.ImageMap =  Ensembl.Panel.ImageMap.extend({
           scale = (end + midpointChr - start + 1) / (this.vertical ? (c.b - c.t) : (c.r - c.l));     // bps per pixel on image
         }
  
-        c.range = { start: start, end: end, scale: scale, midchr: midpointChr, midimg: midpointImg };
+        c.range = { chr: r[4], start: start, end: end, scale: scale, midchr: midpointChr, midimg: midpointImg };
 ////
         
         panel.draggables.push(c);
