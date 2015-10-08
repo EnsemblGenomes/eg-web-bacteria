@@ -133,7 +133,7 @@ sub modify_tree {
                   p      => $p
                   });
 
-      my $D = $self->create_subnode('Domains_'.$p, 'Domains & features ([[counts::prot_domains]])',
+      my $D = $self->create_subnode('Domains_'.$p, 'Domains & features',
       [qw( domains EnsEMBL::Web::Component::Transcript::DomainSpreadsheet )],
 	   { 'availability' => 'transcript has_domains', 'concise' => 'Domains & features', 'url' =>  $url }
 			       );
@@ -187,8 +187,6 @@ sub modify_tree {
 
 	 my $go_hash  = $self->object ? $object->get_ontology_chart($dbname, $cluster->{root}) : {};
 	 next unless (%$go_hash);
-	 my @c = grep { $go_hash->{$_}->{selected} } keys %$go_hash;
-	 my $num = scalar(@c);
 	 
 	 my $url2 = $hub->url({
 	     type    => 'Transcript',
@@ -197,7 +195,7 @@ sub modify_tree {
 			      });
 
 	 (my $desc2 = "$cluster->{db}: $cluster->{description}") =~ s/_/ /g;
-	 $go_menu->append($self->create_node('Ontology/'.$oid, "$desc2 ($num)",
+	 $go_menu->append($self->create_node('Ontology/'.$oid, "$desc2",
 					     [qw( go EnsEMBL::Web::Component::Gene::Ontology )],
 					     { 'availability' => 'transcript has_go', 'concise' => $desc2, 'url' =>  $url2 }
 			  ));
