@@ -20,9 +20,22 @@ limitations under the License.
 
 package EnsEMBL::Web::Document::Element::Tabs;
 
+use previous qw(init);
+
+## Bacteria
+sub init {
+  my $self = shift;
+
+  $self->PREV::init(@_);
+
+  if (my ($info_tab) = grep {($_->{'type'} || '') eq 'Info'} @{$self->entries}) {
+    $info_tab->{'caption'} =~ s/\(\)//; # remove empty assembly name parens
+  }
+}
 
 sub init_species_list {
   $self->{'species_list'} = [];
 }
+##
 
 1;
