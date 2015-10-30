@@ -17,98 +17,118 @@ use EnsEMBL::Web::DBSQL::WebsiteAdaptor;
 use Storable qw(lock_retrieve lock_nstore);
 use JSON qw(from_json to_json);
 use Data::Dumper;
-use Compress::Zlib;
-
+use Storable qw(lock_retrieve lock_nstore);
 
 sub ajax_species_list {
   my ($self, $hub) = @_;
-  my $species_defs   = $hub->species_defs;
-  my $pan_compara    = $species_defs->get_config('MULTI', 'DATABASE_COMPARA_PAN_ENSEMBL');
-  my @rows;
-    
-  foreach my $species (sort $species_defs->valid_species) {
-    my $alias          = $species_defs->get_config($species, 'SPECIES_ALIAS');
-    my $tax_id         = $species_defs->get_config($species, 'TAXONOMY_ID');
-    my $assembly_name  = $species_defs->get_config($species, 'ASSEMBLY_NAME');
-    my $serotype       = $species_defs->get_config($species, 'SEROTYPE');
-    my $publications   = $species_defs->get_config($species, 'PUBLICATIONS');
-    my $display_name   = $species_defs->species_display_label($species);
-    my $in_pan_compara = exists $pan_compara->{GENOME_DB}->{$species}; 
-     
-    push @rows, [
-      join (' ', ref $alias eq 'ARRAY' ? @$alias : ($alias)),
-      qq{<a href="/$species/Info/Index/">$display_name</a>},
-      qq{<a href="/$species/Info/Annotation/#assembly">$assembly_name</a>},
-      qq{<a href="http://www.uniprot.org/taxonomy/$tax_id">$tax_id</a>},
-      $serotype,
-      join(' ', map { qq{<a href="http://europepmc.org/abstract/MED/$_">$_</a>} } @{ $publications || [] }),
-      $in_pan_compara ? 'Y' : 'N', # hack to reverse sorting
-    ];
+  my $species_defs = $hub->species_defs;
+  my $cache_file   = $species_defs->ENSEMBL_TMP_DIR . '/species_index.packed';
+  my $rows;
+
+  if (-f $cache_file) {
+
+    $rows = lock_retrieve($cache_file);
+
+  } else {
+    my $pan_compara  = $species_defs->get_config('MULTI', 'DATABASE_COMPARA_PAN_ENSEMBL');
+      
+    foreach my $species (sort $species_defs->valid_species) {
+      my $alias          = $species_defs->get_config($species, 'SPECIES_ALIAS');
+      my $tax_id         = $species_defs->get_config($species, 'TAXONOMY_ID');
+      my $assembly_name  = $species_defs->get_config($species, 'ASSEMBLY_NAME');
+      my $serotype       = $species_defs->get_config($species, 'SEROTYPE');
+      my $publications   = $species_defs->get_config($species, 'PUBLICATIONS');
+      my $display_name   = $species_defs->species_display_label($species);
+      my $in_pan_compara = exists $pan_compara->{GENOME_DB}->{$species}; 
+       
+      push @$rows, [
+        join (' ', ref $alias eq 'ARRAY' ? @$alias : ($alias)),
+        qq{<a href="/$species/Info/Index/">$display_name</a>},
+        qq{<a href="/$species/Info/Annotation/#assembly">$assembly_name</a>},
+        qq{<a href="http://www.uniprot.org/taxonomy/$tax_id">$tax_id</a>},
+        $serotype,
+        join(' ', map { qq{<a href="http://europepmc.org/abstract/MED/$_">$_</a>} } @{ $publications || [] }),
+        $in_pan_compara ? 'Y' : 'N', # hack to reverse sorting
+      ];
+    }
+  
+    lock_nstore($rows, $cache_file);
   }
  
-  $self->print_datatable($hub, \@rows);
+  $self->print_datatable($hub, $rows);
 }
 
 sub ajax_ftp_list {
   my ($self, $hub) = @_;
   my $species_defs = $hub->species_defs;
-  my $rel          = $species_defs->SITE_RELEASE_VERSION;
-  my @rows;
+  my $cache_file   = $species_defs->ENSEMBL_TMP_DIR . '/ftp_list.packed';
+  my $rows = [];
 
-  my $species_ena = {};
-  eval { # wrap in eval in case there is no species_search table
-    my $dbh = new EnsEMBL::Web::DBSQL::WebsiteAdaptor($self->hub)->db;
-    my $sth = $dbh->prepare("SELECT species, ena_records FROM species_search WHERE genomic_unit = 'bacteria'");
-    $sth->execute;
-    while (my ($sp, $ena) = $sth->fetchrow_array) {
-      $species_ena->{$sp} = [split / /, $ena];
-    }
-  };
-  warn "failed to get ENA records: $@" if $@; 
+  if (-f $cache_file) {
 
-  my @species = $species_defs->valid_species;
+    $rows = lock_retrieve($cache_file);
 
-  foreach my $spp (sort @species) {
-    (my $sp_name = $spp) =~ s/_/ /;
+  } else {
+  
+    my $rel = $species_defs->SITE_RELEASE_VERSION;    
 
-    my $alias              = $species_defs->get_config($spp, 'SPECIES_ALIAS');
-    my $sp_dir             = lc($spp);
-    my $sp_var             = lc($spp) . '_variation';
-    my $sp_vep             = lc($spp) . "_vep_$rel.tar.gz";
-    my $common             = $species_defs->get_config($spp, 'SPECIES_COMMON_NAME');
-    my $genomic_unit       = $species_defs->get_config($spp, 'GENOMIC_UNIT');
-    my $collection         = lc ($species_defs->get_config($spp, 'SPECIES_DATASET') . '_collection' );
-    my $ftp_base_path_stub = "ftp://ftp.ensemblgenomes.org/pub/release-$rel/$genomic_unit/";
-    my $db_name            = $species_defs->get_config($spp, 'databases')->{DATABASE_CORE}->{NAME};
-    my $assembly           = $species_defs->get_config($spp, 'ASSEMBLY_NAME');
-    my $embl_link;
-
-    if (my @ranges = $self->_ena_ranges($species_ena->{$spp})) {
-      if (@ranges == 1) {
-        $embl_link = $self->_ena_link($ranges[0], $assembly, 'EMBL');
-      } else {
-        my @links = map { $self->_ena_link($_, $assembly) } @ranges;
-        $embl_link = join '<br />', ('EMBL', @links);
+    my $species_ena = {};
+    eval { # wrap in eval in case there is no species_search table
+      my $dbh = new EnsEMBL::Web::DBSQL::WebsiteAdaptor($self->hub)->db;
+      my $sth = $dbh->prepare("SELECT species, ena_records FROM species_search WHERE genomic_unit = 'bacteria'");
+      $sth->execute;
+      while (my ($sp, $ena) = $sth->fetchrow_array) {
+        $species_ena->{$sp} = [split / /, $ena];
       }
-    } else {
-      $embl_link = '-';
+    };
+    warn "failed to get ENA records: $@" if $@; 
+
+    my @species = $species_defs->valid_species;
+
+    foreach my $spp (sort @species) {
+      (my $sp_name = $spp) =~ s/_/ /;
+
+      my $alias              = $species_defs->get_config($spp, 'SPECIES_ALIAS');
+      my $sp_dir             = lc($spp);
+      my $sp_var             = lc($spp) . '_variation';
+      my $sp_vep             = lc($spp) . "_vep_$rel.tar.gz";
+      my $common             = $species_defs->get_config($spp, 'SPECIES_COMMON_NAME');
+      my $genomic_unit       = $species_defs->get_config($spp, 'GENOMIC_UNIT');
+      my $collection         = lc ($species_defs->get_config($spp, 'SPECIES_DATASET') . '_collection' );
+      my $ftp_base_path_stub = "ftp://ftp.ensemblgenomes.org/pub/release-$rel/$genomic_unit/";
+      my $db_name            = $species_defs->get_config($spp, 'databases')->{DATABASE_CORE}->{NAME};
+      my $assembly           = $species_defs->get_config($spp, 'ASSEMBLY_NAME');
+      my $embl_link;
+
+      if (my @ranges = $self->_ena_ranges($species_ena->{$spp})) {
+        if (@ranges == 1) {
+          $embl_link = $self->_ena_link($ranges[0], $assembly, 'EMBL');
+        } else {
+          my @links = map { $self->_ena_link($_, $assembly) } @ranges;
+          $embl_link = join '<br />', ('EMBL', @links);
+        }
+      } else {
+        $embl_link = '-';
+      }
+
+      push @$rows, [
+        join (' ', ref $alias eq 'ARRAY' ? @$alias : ($alias)),
+        sprintf('<strong><i>%s</i></strong>', $common),
+        sprintf('<a rel="external" href="%s/fasta/%s/%s/dna/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
+        sprintf('<a rel="external" href="%s/fasta/%s/%s/cdna/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
+        sprintf('<a rel="external" href="%s/fasta/%s/%s/pep/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
+        sprintf('%s',  $embl_link),
+        sprintf('<a rel="external" href="%s/mysql/%s">MySQL</a>',  $ftp_base_path_stub, $db_name),
+        sprintf('<a rel="external" href="%s/gtf/%s/%s/">GTF</a>',  $ftp_base_path_stub, $collection, $sp_dir),
+        sprintf('<a rel="external" href="%s/vep/%s/%s/">VEP</a>',  $ftp_base_path_stub, $collection, $sp_vep),
+        sprintf('<a rel="external" href="%s/tsv/%s/%s/">TSV</a>',  $ftp_base_path_stub, $collection, $sp_dir),
+      ];
     }
 
-    push @rows, [
-      join (' ', ref $alias eq 'ARRAY' ? @$alias : ($alias)),
-      sprintf('<strong><i>%s</i></strong>', $common),
-      sprintf('<a rel="external" href="%s/fasta/%s/%s/dna/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
-      sprintf('<a rel="external" href="%s/fasta/%s/%s/cdna/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
-      sprintf('<a rel="external" href="%s/fasta/%s/%s/pep/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
-      sprintf('%s',  $embl_link),
-      sprintf('<a rel="external" href="%s/mysql/%s">MySQL</a>',  $ftp_base_path_stub, $db_name),
-      sprintf('<a rel="external" href="%s/gtf/%s/%s/">GTF</a>',  $ftp_base_path_stub, $collection, $sp_dir),
-      sprintf('<a rel="external" href="%s/vep/%s/%s/">VEP</a>',  $ftp_base_path_stub, $collection, $sp_vep),
-      sprintf('<a rel="external" href="%s/tsv/%s/%s/">TSV</a>',  $ftp_base_path_stub, $collection, $sp_dir),
-    ];
-   }
+    lock_nstore($rows, $cache_file);
+  }
 
-  $self->print_datatable($hub, \@rows);
+  $self->print_datatable($hub, $rows);
 }
 
 sub print_datatable {
