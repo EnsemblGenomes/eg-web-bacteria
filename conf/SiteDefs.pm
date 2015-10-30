@@ -40,13 +40,13 @@ sub update_conf {
     map {delete($SiteDefs::__species_aliases{$_}) } keys %SiteDefs::__species_aliases;
   
     $SiteDefs::ENSEMBL_DATASETS = [];
-    push (@{$SiteDefs::ENSEMBL_DATASETS}, "bacteria_$_") foreach (0);#..123);
+    push (@{$SiteDefs::ENSEMBL_DATASETS}, "bacteria_$_") foreach (0..123);
     
-    $SiteDefs::ENSEMBL_PRIMARY_SPECIES = 'escherichia_coli_str_k_12_substr_mg1655'; 
-    $SiteDefs::__species_aliases{ 'escherichia_coli_str_k_12_substr_mg1655'       } = [qw(bc)];
+    $SiteDefs::ENSEMBL_PRIMARY_SPECIES = 'Escherichia_coli_str_k_12_substr_mg1655'; 
+    $SiteDefs::__species_aliases{ 'Escherichia_coli_str_k_12_substr_mg1655'       } = [qw(ec)];
         
-    $SiteDefs::ENSEMBL_SECONDARY_SPECIES = 'tropheryma_whipplei_tw08_27'; 
-    $SiteDefs::__species_aliases{ 'tropheryma_whipplei_tw08_27'       } = [qw(tw)];
+    $SiteDefs::ENSEMBL_SECONDARY_SPECIES = 'Tropheryma_whipplei_tw08_27'; 
+    $SiteDefs::__species_aliases{ 'Tropheryma_whipplei_tw08_27'       } = [qw(tw)];
 }
 
 1;
