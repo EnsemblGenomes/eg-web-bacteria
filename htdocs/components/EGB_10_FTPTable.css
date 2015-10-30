@@ -1,0 +1,6 @@
+/* CSS for datatable on /species.html */
+
+#ftp_table .no-results      { margin: 10px; font-weight: bold}
+#ftp_table .no-results-help { margin: 10px;}
+#ftp_table input     { width: 250px; }
+#ftp_table .overlay  { width:0; height:0; overflow:hidden; } /* hide placeholder text */
