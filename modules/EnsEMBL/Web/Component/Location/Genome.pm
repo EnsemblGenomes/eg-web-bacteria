@@ -245,7 +245,7 @@ sub chromosomes_structure {
    
     return unless @chrs;
     
-    my $species    = $hub->species_defs->SYSTEM_NAME;
+    my $species    = $hub->species;
     my $htdocs_dir = {@{$SiteDefs::ENSEMBL_PLUGINS}}->{'EG::Bacteria'} . '/htdocs';
     my $sa         = $hub->database('core', $species)->get_SliceAdaptor;
     my %slices     = map {$_->seq_region_name => $_} @{$sa->fetch_all('toplevel') || []};
