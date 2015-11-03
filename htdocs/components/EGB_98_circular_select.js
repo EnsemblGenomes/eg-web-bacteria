@@ -500,8 +500,8 @@ Raphael.fn.pieChartCirc = function (cx, cy, r, stroke, target, bp, reg_type, cIn
     current = s1;
     //setting the text outside the function because the end_point - start_point coordinates might have been manipulated (if Math.abs(end_point-start_point) < 1 )
     //and in this case they wouldn't reflect the authentic start_reg and end_reg
-    var txt_c1 = parseInt(start_reg, 10) + '-' + parseInt(end_reg, 10);
-    angle_text = paper.text(cx, cy, txt_c1);
+    //var txt_c1 = parseInt(start_reg, 10) + '-' + parseInt(end_reg, 10);
+    //angle_text = paper.text(cx, cy, txt_c1);
 
 
     return chart;
