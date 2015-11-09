@@ -81,6 +81,9 @@ sub content {
   
   my $data = $object->filtered_family_data($family);
 
+
+### EG Start 
+
   if($self->format eq 'Excel'){
 
   	my $excel_output = "Gene stable ID, Name, Discription, Taxon ID, Species \n";
@@ -92,6 +95,9 @@ sub content {
 
   }
   
+  ### EG End 
+
+
   # family stats
     
   my $stats = $self->new_twocol;
@@ -112,6 +118,10 @@ sub content {
     );
   }
   $html .= sprintf '<a class="fbutton" target="_blank" href="%s">Download protein sequences</a> ', $hub->url({ action => 'Gene_families', function => 'Sequence', _format => 'Text', gene_family_id => $gene_family_id });
+  
+
+  ### EG Start 
+
   $html .= sprintf (
   	'<a class="fbutton" target="_blank" href="%s">%s</a> ',
   	 $hub->url({ action => 'Gene_families', _format => 'Excel', gene_family_id => $gene_family_id, filename => $data->{is_filtered} ? $gene_family_id."-filtered" : $gene_family_id}),
@@ -125,6 +135,9 @@ sub content {
   	$html .= " from your filter" if $data->{is_filtered};
   	$html .= ".</p>";
   }
+
+  ### EG End
+
 
   # member table
   
@@ -145,6 +158,8 @@ sub content {
     }
   );
 
+  ### EG Start 
+
   my $member_count = 0;
   
   foreach my $member (@{$data->{members}}) {
@@ -164,6 +179,8 @@ sub content {
     	last;
     }
   }
+
+  ### EG End
    
   return $html . $table->render;
 }
