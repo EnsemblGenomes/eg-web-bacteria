@@ -30,5 +30,5 @@ Ensembl.Panel.Piechart = Ensembl.Panel.Piechart.extend({
     }
 //
 
-  },
+  }
 });
