@@ -58,37 +58,7 @@ sub modify_tree {
   $self->delete_node('Phenotype');
 
   my $xrefs = $self->get_node('Matches');
-  
-  # get all ontologies mapped to this species
-  my $go_menu = $self->create_submenu('GO', 'Ontology');
-  my %olist = map {$_ => 1} @{$species_defs->DISPLAY_ONTOLOGIES ||[]};
-
-  if (%olist) {
-     # get all ontologies available in the ontology db
-     my %clusters = $species_defs->multiX('ONTOLOGIES');
-
-     # get all the clusters that can generate a graph
-     my @clist =  grep { $olist{ $clusters{$_}->{db} }} sort {$clusters{$a}->{db} cmp $clusters{$b}->{db}} keys %clusters; # Find if this ontology has been loaded into ontology db
-
-     foreach my $oid (@clist) {
-	 my $cluster = $clusters{$oid};
-	 
-	 my $url2 = $hub->url({
-	     type    => 'Gene',
-	     action  => 'Ontology/'.$oid,
-	     oid     => $oid
-			      });
-
-	 (my $desc2 = "$cluster->{db}: $cluster->{description}") =~ s/_/ /g;
-	 $go_menu->append($self->create_node('Ontology/'.$oid, "$desc2",
-					     [qw( go EnsEMBL::Web::Component::Gene::Ontology )],
-					     { 'availability' => 'gene', 'concise' => $desc2, 'url' =>  $url2 }
-			  ));
-	 
-     }
-  }
-  $xrefs->after( $go_menu );
-  
+   
 ##----------------------------------------------------------------------
 ## Compara menu: alignments/orthologs/paralogs/trees
 #  my $pancompara_menu = $self->create_submenu( 'PanCompara', 'Pan-taxonomic Compara' );
@@ -198,8 +168,7 @@ my $tree_node = $self->create_node(
                 ));
 
 ### EG
-
-  $go_menu->after($pancompara_menu);
+  $self->get_node('Ontologies')->after($pancompara_menu);
   
 
 }
