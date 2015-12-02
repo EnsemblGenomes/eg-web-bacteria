@@ -22,8 +22,10 @@ use strict;
 
 sub content {
   my $self   = shift;
-  my $object = $self->object;
+  my $object = $self->object || $self->hub->core_object('gene');
   my $gene   = $object->Obj;
+
+## EG  
   my $gene_slice;
   my ($operon) = @{$gene->feature_Slice->get_all_Operons};
   if($operon){
@@ -33,7 +35,7 @@ sub content {
   else{
     $gene_slice = $gene->feature_Slice->expand(10e3,10e3);
   }
-
+##
      
   # Get the web_image_config
   my $image_config = $object->get_imageconfig('gene_summary');
@@ -48,8 +50,9 @@ sub content {
   my $node = $image_config->get_node(lc $key);
   
   $node->set('display', 'transcript_label') if $node && $node->get('display') eq 'off';
+## EG  
   $image_config->modify_configs([$key], {label_operon_genes=>0});#not working :(
-
+##
   my $image = $self->new_image($gene_slice, $image_config, [ $gene->stable_id ]);
   
   return if $self->_export_image($image);
@@ -59,10 +62,12 @@ sub content {
   $image->set_button('drag', 'title' => 'Drag to select region');
   
   return $image->render;
+## EG  
    # . $self->_info(
    #'Configuring the display',
    #'<p>Tip: use the "<strong>Configure this page</strong>" link on the left to show additional data in this region.</p>'
    #);
+##
 }
 
 1;
