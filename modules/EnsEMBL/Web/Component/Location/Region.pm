@@ -20,7 +20,7 @@ package EnsEMBL::Web::Component::Location::Region;
 
 sub content {
   my $self         = shift;
-  my $object       = $self->object;
+  my $object       = $self->object || $hub->core_object('location');
   my $slice        = $object->slice;
   my $length       = $slice->length;
   my $image_config = $object->get_imageconfig('cytoview');
