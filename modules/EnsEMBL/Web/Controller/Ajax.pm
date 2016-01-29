@@ -113,7 +113,7 @@ sub ajax_ftp_list {
 
       push @$rows, [
         join (' ', ref $alias eq 'ARRAY' ? @$alias : ($alias)),
-        sprintf('<strong><i>%s</i></strong>', $common),
+        sprintf('<strong><i><a href="/%s">%s</a></i></strong>', $sp_dir, $common),
         sprintf('<a rel="external" href="%s/fasta/%s/%s/dna/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
         sprintf('<a rel="external" href="%s/fasta/%s/%s/cdna/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
         sprintf('<a rel="external" href="%s/fasta/%s/%s/pep/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
