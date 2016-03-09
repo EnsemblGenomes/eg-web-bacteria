@@ -157,11 +157,8 @@ sub modify_tree {
     }  
   }
   
-  my @reversed_nodes = reverse(@{$tree->child_nodes});
-  foreach my $node (@reversed_nodes) {                                                                                                                                                                       
-    $prot_menu->after($node);
-  }   
-  
+  # put protein menu at top
+  $tree->child_nodes->[0]->before($prot_menu);
  
   # EG:ENSEMBL-2785 add this new URL so that the Transcript info appears at the top of the page for the Karyotype display with Locations tables
     my $sim_node = $self->get_node('Similarity');
