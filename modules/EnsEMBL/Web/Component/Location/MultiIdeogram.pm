@@ -81,7 +81,7 @@ sub content {
       my $species      = $_->{'species'};
       my $display_name = $species_defs->species_display_label($species);
       my $chr_name     = $_->{'name'};
-      my $img          = 'region_'.$species.'_'.$chr_name.'.png';
+      my $img          = 'region_'.lc($species).'_'.$chr_name.'.png';
       my $chromosome   = $_->{'slice'}->adaptor->fetch_by_region(undef, $_->{'name'});
       my $region_name  =  $chromosome->seq_region_name;
       my $cr           = $chromosome->is_circular || 0;
