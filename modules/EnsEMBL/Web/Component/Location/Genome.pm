@@ -27,7 +27,6 @@ use base qw(EnsEMBL::Web::Component::Location);
 use CGI qw(escapeHTML);
 use Data::Dumper;
 use EnsEMBL::Web::Document::Table;
-use EnsEMBL::Web::Text::FeatureParser;
 use EnsEMBL::Web::TmpFile::Text;
 use EnsEMBL::Web::RegObj;
 use Image::Size;
