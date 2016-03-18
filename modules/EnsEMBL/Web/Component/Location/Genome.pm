@@ -269,7 +269,7 @@ sub chromosomes_structure {
     foreach my $ch (@chrs) {
       my $ln    = $slices{$ch}->length;
       my $cr    = $slices{$ch}->is_circular || 0;
-      my $image = "/img/species/region_${species}_${ch}.png";
+      my $image = "/img/species/region_" . lc($species) . "_${ch}.png";
        
       my ($width, $height) = imgsize("$htdocs_dir/$image");
 
@@ -341,7 +341,7 @@ sub feature_karyotypes {
       
       my $has_images;
       foreach my $region (@reg_features) {
-        $has_images ++ if -e "$htdocs_dir/img/species/region_${species}_${region}.png";
+        $has_images ++ if -e "$htdocs_dir/img/species/region_" . lc(${species}) . "_${region}.png";
       }
       return unless $has_images;
       
@@ -387,10 +387,10 @@ sub feature_karyotypes {
         } else {
           $links = join(',', map {sprintf($link_template2, $region, $_ - 1000, $_ + 1000) } @{$region_features{$region}{start}});
         }
-
+        my $lc_species = lc($species);
         $html .= qq{
             <input class="panel_type" type="hidden" value="IdeogramPanel" />
-            <img id="${region}~${ln}~${cr}~${i}~${feats}~${links}" class="circularImage" src="/img/species/region_${species}_${region}.png" alt="Karyograph selector" />
+            <img id="${region}~${ln}~${cr}~${i}~${feats}~${links}" class="circularImage" src="/img/species/region_${lc_species}_${region}.png" alt="Karyograph selector" />
           </div>
         };
 

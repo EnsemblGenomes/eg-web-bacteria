@@ -43,7 +43,7 @@ sub bacterial_chromosome {
   my $species      = $object->species;
   my $display_name = $species_defs->species_display_label($species);
   my $chr_name     = $object->seq_region_name;
-  my $img          = 'region_'.$species.'_'.$chr_name.'.png';
+  my $img          = 'region_'.lc($species).'_'.$chr_name.'.png';
   my $region_name  = $object->seq_region_name;
   
 
