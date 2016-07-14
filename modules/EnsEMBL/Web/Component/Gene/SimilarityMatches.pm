@@ -95,6 +95,7 @@ sub matches_to_html {
                                                 data_table => 1, 
                                                 exportable => 1, 
                                                 hidden_columns => \@hidden_cols, 
+                                                class=>"mobile-nolink",
                                               });
 
 ## EG - show a more generic message

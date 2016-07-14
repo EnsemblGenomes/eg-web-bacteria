@@ -36,7 +36,8 @@ sub content {
     $gene_slice = $gene->feature_Slice->expand(10e3,10e3);
   }
 ##
-     
+  $gene_slice = $gene_slice->invert if $object->seq_region_strand < 0;
+
   # Get the web_image_config
   my $image_config = $object->get_imageconfig('gene_summary');
   
