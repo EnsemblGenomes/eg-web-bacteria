@@ -25,30 +25,35 @@ no warnings "uninitialized";
 use POSIX qw(floor ceil);
 
 sub _location_from_SeqRegion {
-  my ($self, $chr, $start, $end, $strand, $keep_slice) = @_;
+  my ($self, $chr, $start, $end, $strand) = @_;
 
   if (defined $start) {
-    $start = floor($start);
-    $end   = $start unless defined $end;
-    $end   = floor($end);
-    $end   = 1 if $end < 1;
+    $start    = floor($start);
+    $end      = $start unless defined $end;
+    $end      = floor($end);
+    $end      = 1 if $end < 1;
     $strand ||= 1;
-    $start = 1 if $start < 1; # Truncate slice to start of seq region
+    $start    = 1 if $start < 1; # Truncate slice to start of seq region
 
+## EG    
     foreach my $system0 (@{$self->__coord_systems}) {
-	my $slice;
-	eval { $slice = $self->_slice_adaptor->fetch_by_region($system0->name, $chr, 1, 2, $strand); };
-        if ($slice) {
-	    unless($slice->is_circular eq '1') {
-                ($start, $end) = ($end, $start) if $start > $end;
-            } 
-            last;
-        }
+	    my $slice;
+	    eval { $slice = $self->_slice_adaptor->fetch_by_region($system0->name, $chr, 1, 2, $strand); };
+      if ($slice) {
+	      if (!$slice->is_circular and $start > $end) {
+          ($start, $end) = ($end, $start);
+        } 
+        last;
+      }
     }
-
+##
+    
     foreach my $system (@{$self->__coord_systems}) {
       my $slice;
-      eval { $slice = $self->_slice_adaptor->fetch_by_region($system->name, $chr, $start, $end, $strand); };
+      
+      eval {
+        $slice = $self->_slice_adaptor->fetch_by_region($system->name, $chr, $start, $end, $strand);
+      };
 
       warn $@ and next if $@;
 
@@ -60,40 +65,39 @@ sub _location_from_SeqRegion {
           $slice = $self->_slice_adaptor->fetch_by_region($system->name, $chr, $start, $end, $strand);
         }
         
-        return $self->_create_from_slice($system->name, "$chr $start-$end ($strand)", $slice, undef, undef, $keep_slice);
+        return $self->_create_from_slice($system->name, "$chr $start-$end ($strand)", $slice);
       }
     }
     
     $self->problem('fatal', 'Locate error', $self->_help("Cannot locate region $chr: $start - $end on the current assembly."));
-    
-    return undef;
   } else {
     foreach my $system (@{$self->__coord_systems}) {
-      my $TS;
-      eval { $TS = $self->_slice_adaptor->fetch_by_region($system->name, $chr); };
+      my $slice;
+      
+      eval {
+        $slice = $self->_slice_adaptor->fetch_by_region($system->name, $chr);
+      };
       
       next if $@;
       
-      return $self->_create_from_slice($system->name , $chr, $self->expand($TS), '', $chr, $keep_slice) if $TS;
+      return $self->_create_from_slice($system->name , $chr, $self->expand($slice), $chr) if $slice;
     }
-    
-    my $action = $self->action;
     
     if ($chr) {
       $self->problem('fatal', 'Locate error', $self->_help("Cannot locate region $chr on the current assembly."));
-    } elsif ($action && $action eq 'Genome' && $self->species_defs->ENSEMBL_CHROMOSOMES) {
+    } elsif ($self->hub->action eq 'Genome' && $self->species_defs->ENSEMBL_CHROMOSOMES) {
       # Create a slice of the first chromosome to force this page to work
-      my @chrs = @{$self->species_defs->ENSEMBL_CHROMOSOMES};
-      my $TS = $self->_slice_adaptor->fetch_by_region('chromosome', $chrs[0]) if scalar @chrs;
+      my @chrs  = @{$self->species_defs->ENSEMBL_CHROMOSOMES};
+      my $slice = $self->_slice_adaptor->fetch_by_region('chromosome', $chrs[0]) if scalar @chrs;
       
-      return $self->_create_from_slice('chromosome', $chrs[0], $self->expand($TS), '', $chrs[0], $keep_slice) if $TS;
+      return $self->_create_from_slice('chromosome', $chrs[0], $self->expand($slice), $chrs[0]) if $slice;
     } else {
       # Might need factoring out if we use other methods to get a location (e.g. marker)
       $self->problem('fatal', 'Please enter a location', $self->_help('A location is required to build this page'));
     }
-    
-    return undef;
   }
+  
+  return undef;
 }
 
 1;
