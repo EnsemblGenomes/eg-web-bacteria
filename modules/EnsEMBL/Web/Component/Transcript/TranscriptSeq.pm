@@ -38,8 +38,8 @@ sub get_sequence_data {
     if($trans->get_all_alternative_translations) {
       foreach my $atrans (@{$trans->get_all_alternative_translations}) {
         next if ($atrans->stable_id ne $p);
-	$translation = $atrans;
-	last;
+        $translation = $atrans;
+        last;
       }
     }
   }
@@ -230,7 +230,8 @@ sub get_sequence_data {
   
   push @sequence, \@reference_seq;
   push @markup, $mk;
-  
+
+  my @seq_names = ( $config->{'species'} );
   for ($variation_seq, $coding_seq, $protein_seq, @rna_seq) {
     if ($config->{$_->{'name'}}) {
       if ($_->{'name'} eq 'variation') {
@@ -239,12 +240,14 @@ sub get_sequence_data {
         unshift @{$config->{'numbering'}}, 0;
         unshift @{$config->{'seq_order'}}, $_->{'name'};
         unshift @{$config->{'slices'}}, { slice => join('', map $_->{'letter'}, @{$_->{'seq'}}), name => $_->{'name'} };
+        unshift @seq_names,$_->{'name'};
       } else {
         push @sequence, $_->{'seq'};
         push @markup, {};
         push @{$config->{'numbering'}}, 1;
         push @{$config->{'seq_order'}}, $_->{'name'};
         push @{$config->{'slices'}}, { slice => join('', map $_->{'letter'}, @{$_->{'seq'}}), name => $_->{'name'} };
+        push @seq_names,$_->{'name'};
       }
     }
   }
@@ -277,7 +280,7 @@ sub get_sequence_data {
     $_->{'exons'}->{0}->{'type'} = [ 'exon0' ] for @markup;
   }
   
-  return (\@sequence, \@markup, $seq);
+  return (\@sequence, \@markup, \@seq_names, $length);
 }
 
 1;
