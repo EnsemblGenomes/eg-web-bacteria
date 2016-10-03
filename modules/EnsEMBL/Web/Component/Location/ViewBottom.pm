@@ -50,7 +50,7 @@ sub content {
   });
 
   ## Force display of individual low-weight markers on pages linked to from Location/Marker
-  if (my $marker_id = $hub->param('m')) {
+  if (my $marker_id = $self->param('m')) {
     $image_config->modify_configs(
       [ 'marker' ],
       { marker_id => $marker_id }

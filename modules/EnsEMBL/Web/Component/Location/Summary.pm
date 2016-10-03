@@ -25,8 +25,6 @@ use base qw(EnsEMBL::Web::Component::Location);
 
 use Image::Size;
 
-
-use EnsEMBL::Web::RegObj;
 use Data::Dumper;
 
 sub _init {

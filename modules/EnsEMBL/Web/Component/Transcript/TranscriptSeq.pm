@@ -26,7 +26,7 @@ sub get_sequence_data {
   my ($object, $config) = @_;
   
   my $hub          = $self->hub;
-  my $p            = $hub->param('p') || 0;
+  my $p            = $self->param('p') || 0;
   my $trans        = $object->Obj;
   my @exons        = @{$trans->get_all_Exons};
   my $trans_strand = $exons[0]->strand;
@@ -153,14 +153,14 @@ sub get_sequence_data {
   
   if ($config->{'variation'}) {
     my $slice  = $trans->feature_Slice;
-    my $filter = $hub->param('population_filter');
+    my $filter = $self->param('population_filter');
     my %population_filter;
     
     if ($filter && $filter ne 'off') {
       %population_filter = map { $_->dbID => $_ }
         @{$slice->get_all_VariationFeatures_by_Population(
           $hub->get_adaptor('get_PopulationAdaptor', 'variation')->fetch_by_name($filter), 
-          $hub->param('min_frequency')
+          $self->param('min_frequency')
         )};
     }
     

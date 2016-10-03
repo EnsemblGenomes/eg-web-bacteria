@@ -28,7 +28,6 @@ use CGI qw(escapeHTML);
 use Data::Dumper;
 use EnsEMBL::Web::Document::Table;
 use EnsEMBL::Web::TmpFile::Text;
-use EnsEMBL::Web::RegObj;
 use Image::Size;
 use JSON;
 
@@ -37,7 +36,7 @@ sub feature_tables {
   my $feature_dets = shift;
   my $hub          = $self->hub;
   #my $data_type = $object->param('ftype');
-  my $data_type    = $hub->param('ftype');
+  my $data_type    = $self->param('ftype');
   my $html;
   my @tables;
 
@@ -136,7 +135,7 @@ sub feature_tables {
     }
   }
   if (! $html) {
-    my $id = $hub->param('id');
+    my $id = $self->param('id');
     $html .= qq(<br /><br />No mapping of $id found<br /><br />);
   }
   return $html;
@@ -149,9 +148,9 @@ sub content {
   my $species = $hub->species;
   my $html;
 
-  if (my $id = $hub->param('id') || $hub->referer->{'ENSEMBL_TYPE'} eq 'LRG') { ## "FeatureView"
+  if (my $id = $self->param('id') || $hub->referer->{'ENSEMBL_TYPE'} eq 'LRG') { ## "FeatureView"
 
-    my $data_type = $hub->param('ftype');  
+    my $data_type = $self->param('ftype');  
     my $features = $self->builder->create_objects('Feature', 'lazy')->convert_to_drawing_parameters;  
 
     my @all_features;
@@ -180,18 +179,18 @@ sub content {
     }
 
     if ($has_features) { 
-      unless ($hub->param('ph')) { ## omit h3 header for phenotypes
+      unless ($self->param('ph')) { ## omit h3 header for phenotypes
         my $title = 'Locations';
         $title .= ' of ';
         my ($data_type, $assoc_name);
-        my $ftype = $hub->param('ftype');
+        my $ftype = $self->param('ftype');
         if (grep (/$ftype/, keys %$features)) {
           $data_type = $ftype;
         }
         else {
           my @A = sort keys %$features;
           $data_type = $A[0];
-          $assoc_name = $hub->param('name');
+          $assoc_name = $self->param('name');
           unless ($assoc_name) {
             $assoc_name = $xref_type.' ';
             $assoc_name .= $id;

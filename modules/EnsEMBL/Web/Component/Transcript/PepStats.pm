@@ -21,7 +21,7 @@ package EnsEMBL::Web::Component::Transcript::PepStats;
 sub content {
   my $self = shift;
   my $hub        = $self->hub;
-  my $protein   = $hub->param('p') || '';
+  my $protein   = $self->param('p') || '';
   my $object = $self->object;
   
   my $tl;

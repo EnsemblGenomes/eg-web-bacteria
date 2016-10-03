@@ -1,6 +1,7 @@
 =head1 LICENSE
 
-Copyright [2009-2014] EMBL-European Bioinformatics Institute
+Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
+Copyright [2016] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,8 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 =cut
-
-# $Id: TranscriptSummary.pm,v 1.5 2013-03-22 16:16:58 nl2 Exp $
 
 package EnsEMBL::Web::Component::Transcript::TranscriptSummary;
 
@@ -34,8 +33,16 @@ sub content {
   my $coding_exons = @{$transcript->get_all_translateable_Exons};
   my $basepairs    = $self->thousandify($transcript->seq->length);
   my $residues     = $translation ? $self->thousandify($translation->length) : 0;
-  my @CCDS         = grep $_->dbname eq 'CCDS', @{$transcript->get_all_DBLinks};
-  my $html         = "<strong>Exons:</strong> $exons <strong>Coding exons:</strong> $coding_exons <strong>Transcript length:</strong> $basepairs bps";
+  my @CCDS         = @{$transcript->get_all_DBLinks('CCDS')};
+  my @Uniprot      = @{$transcript->get_all_DBLinks('Uniprot/SWISSPROT')};
+  my ($tsl)        = @{$transcript->get_all_Attributes('TSL')};
+  my $incomplete;
+  foreach my $attrib_type (qw(CDS_start_NF CDS_end_NF)){
+    if (my @attribs = @{$transcript->get_all_Attributes($attrib_type)}) {
+      $incomplete->{$attrib_type}=1;
+    }
+  }
+  my $html         = "<strong>Exons:</strong> $exons, <strong>Coding exons:</strong> $coding_exons, <strong>Transcript length:</strong> $basepairs bps,";
   $html           .= " <strong>Translation length:</strong> $residues residues" if $residues;
 
 ## EG
@@ -82,7 +89,7 @@ sub content {
     $table->add_row('Type', $type) if $type;
   }
   ## add prediction method
-  my $label = ($db eq 'vega' || $species_defs->ENSEMBL_SITETYPE eq 'Vega' ? 'Curation' : 'Prediction') . ' Method';
+  my $label = ($db eq 'vega' || $species_defs->ENSEMBL_SITETYPE eq 'Vega' ? 'Curation' : 'Annotation') . ' Method';
   my $text  = "No $label defined in database";
 
   eval {
@@ -110,7 +117,13 @@ sub content {
   ## add frameshift introns info
   my $frameshift_introns = $object->get_frameshift_introns;
 
-  $table->add_row('Frameshift introns', $self->glossary_mouseover('Frameshift intron', 'Frameshift introns') . " occur at intron number(s)  $frameshift_introns.") if $frameshift_introns;
+  $table->add_row('Frameshift introns', $self->glossary_helptip('Frameshift introns', 'Frameshift intron') . " occur at intron number(s)  $frameshift_introns.") if $frameshift_introns;
+
+
+  ## add trans-spliced transcript info
+  my $trans_spliced_transcript_info = $object->get_trans_spliced_transcript_info;
+  $table->add_row('Trans-spliced' , sprintf('This is a %s transcript', $self->helptip('trans-spliced', $trans_spliced_transcript_info->description))) if $trans_spliced_transcript_info;
+
 
   ## add stop gained/lost variation info
   my @attrib_codes = qw(StopLost StopGained);
@@ -137,7 +150,7 @@ sub content {
         v       => $id,
       });
 
-      my $id_link = qq{<a href="$link">$id</a>}; 
+      my $id_link = qq{<a href="$link">$id</a>};
 
       if ($code eq 'StopLost') {
         $description = "This transcript has a variant, $id_link, that causes a stop codon to be lost in at least 10% of HapMap or 1000 Genome population(s) $population_string.";
@@ -163,6 +176,19 @@ sub content {
   ## add alternative transcript info
   my $alt_trans = $self->_matches('alternative_transcripts', 'Alternative transcripts', 'ALT_TRANS', 'show_version');
   $table->add_row('Alternative transcripts', $alt_trans) if $alt_trans;
+
+  my $cv_terms = $object->get_cv_terms;
+  if (@$cv_terms) {
+    my $first = shift @$cv_terms;
+    my $text = qq(<p>$first [<a href="http://vega.sanger.ac.uk/info/about/annotation_attributes.html" target="external" class="constant">Definitions</a>]</p>);
+    foreach my $next (@$cv_terms) {
+      $text .= "<p>$next</p>";
+    }
+    $table->add_row('Annotation Attributes', $text) if $text;;
+  }
+
+  ## add gencode basic info
+  $table->add_row('GENCODE basic gene', qq(This transcript is a member of the <a href="/Help/Glossary?id=500" class="popup">Gencode basic</a> gene set.)) if(@{$transcript->get_all_Attributes('gencode_basic')});
 
   return $table->render;
 }

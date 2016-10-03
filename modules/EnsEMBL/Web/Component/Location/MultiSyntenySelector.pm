@@ -48,7 +48,7 @@ sub content_ajax {
 
   my $primary_species = $hub->species;
 
-  my %shown           = map { $hub->param("s$_") => $_ } grep s/^s(\d+)$/$1/, $hub->param; # get species (and parameters) already shown on the page
+  my %shown           = map { $self->param("s$_") => $_ } grep s/^s(\d+)$/$1/, $self->param; # get species (and parameters) already shown on the page
   my %species;
 
 

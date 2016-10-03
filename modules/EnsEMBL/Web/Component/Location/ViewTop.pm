@@ -25,9 +25,9 @@ sub content {
   my $hub    = $self->hub;
   my $object = $self->object || $hub->core_object('location');
 
-  return if $hub->param('show_panel') eq 'no';
+  return if $self->param('show_panel') eq 'no';
 
-  my $flanking     = $hub->param('flanking');
+  my $flanking     = $self->param('flanking');
   my $flank_length = $flanking ? $object->length + (2 * $flanking) : 0;
   my $image_config = $hub->get_imageconfig('contigviewtop');
   my $threshold    = $image_config->get_parameter('min_size');
@@ -94,7 +94,7 @@ sub content {
   };
 
   ## Force display of individual low-weight markers on pages linked to from Location/Marker                                                                                                                       
-  if (my $marker_id = $hub->param('m')) {
+  if (my $marker_id = $self->param('m')) {
     $image_config->modify_configs(
       [ 'marker' ],
       { marker_id => $marker_id }
