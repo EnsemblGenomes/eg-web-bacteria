@@ -1,4 +1,4 @@
-// $Revision: 1.5 $
+/*// $Revision: 1.5 $
 
 Ensembl.Panel.ImageMap =  Ensembl.Panel.ImageMap.extend({
   
@@ -132,7 +132,7 @@ Ensembl.Panel.ImageMap =  Ensembl.Panel.ImageMap.extend({
     });
   },
   
-  /**
+  *
    * Highlights regions of the image.
    * In MultiContigView, each image can have numerous regions to highlight - one per species
    *
@@ -143,7 +143,7 @@ Ensembl.Panel.ImageMap =  Ensembl.Panel.ImageMap.extend({
    * redbox2: Solid red line outlining the region of an image displayed on the next image.
    *          If there is only one image, or the next image has an invalid coordinate system 
    *          (eg AlignSlice or whole chromosome), highlighting is taken from the r parameter in the url.
-   */
+   
   highlightImage: function (imageNumber, speciesNumber, start, end) {
     // Make sure each image is highlighted based only on itself or the next image on the page
     if (!this.draggables.length || this.vdrag || imageNumber - this.imageNumber > 1 || imageNumber - this.imageNumber < 0) {
@@ -271,3 +271,4 @@ Ensembl.Panel.ImageMap =  Ensembl.Panel.ImageMap.extend({
   }
   
 });
+*/
