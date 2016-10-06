@@ -27,9 +27,9 @@ use LibDirs;
 
 use SiteDefs;
 use EnsEMBL::Web::DBSQL::DBAdaptor;
-use EnsEMBL::Web::Hub;
+use EnsEMBL::Web::DBHub;
 
-my $hub = new EnsEMBL::Web::Hub;
+my $hub = new EnsEMBL::Web::DBHub;
 
 my $dir = "$Bin/../../htdocs/ssi/species";
 die "Dir $dir does not exist" unless -d $dir;
