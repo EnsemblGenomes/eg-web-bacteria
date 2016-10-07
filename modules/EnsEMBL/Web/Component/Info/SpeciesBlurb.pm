@@ -63,20 +63,20 @@ sub content {
 # $html .= '<h2 id="genebuild">Gene annotation</h2>';
 # $html .= EnsEMBL::Web::Controller::SSI::template_INCLUDE($self, "/ssi/species/${species}_annotation.html");
 ## ....EG....
-    
-  $html .= EnsEMBL::Web::Controller::SSI::template_INCLUDE($self, "/ssi/species/about_${species}.html");
+  my $lc_species = lc($species);
+  $html .= EnsEMBL::Web::Controller::SSI::template_INCLUDE($self, "/ssi/species/about_${lc_species}.html");
 ## EG END
 
   $html .= '
     </div>
   </div>
   <div class="column-two">
-    <div class="column-padding" style="margin-left:16px">';
-
+    <div class="column-padding" class="annotation-stats">';
+    
   ## ASSEMBLY STATS 
   my $file = '/ssi/species/stats_' . $self->hub->species . '.html';
   $html .= '<h2>Statistics</h2>';
-  $html .= EnsEMBL::Web::Controller::SSI::template_INCLUDE($self, $file);
+  $html .= $self->species_stats;
 
   $html .= '
     </div>
