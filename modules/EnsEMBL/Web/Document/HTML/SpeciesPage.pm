@@ -20,12 +20,11 @@ package EnsEMBL::Web::Document::HTML::SpeciesPage;
 
 use strict;
 use Data::Dumper;
-use EnsEMBL::Web::Hub;
 use EnsEMBL::Web::Document::Table;
 
 sub render {
   my ($self, $request ) = @_;
-  my $hub          = EnsEMBL::Web::Hub->new;
+  my $hub          = $self->hub;
   my $species_defs = $hub->species_defs;
   my $pan_compara  = $species_defs->get_config('MULTI', 'DATABASE_COMPARA_PAN_ENSEMBL');
   my $search       = $hub->param('search') || '';
