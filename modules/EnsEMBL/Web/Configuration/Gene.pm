@@ -162,11 +162,6 @@ my $tree_node = $self->create_node(
       'no_menu_entry' => 1 }
   ));
 
-  $pancompara_menu->append($self->create_node('PanComparaSpecies', 'List of species',
-    [qw(pancompara_spec  EnsEMBL::Web::Component::Info::PanComparaSpecies)],
-                { 'availability' => 'gene database:compara_pan_ensembl core' }
-                ));
-
 ### EG
   $self->get_node('Ontologies')->after($pancompara_menu);
   
