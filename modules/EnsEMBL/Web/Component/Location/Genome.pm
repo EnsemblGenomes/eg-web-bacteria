@@ -401,6 +401,13 @@ sub feature_karyotypes {
     return $html;
 } 
 
+## EG - View features not working for Bacteria. Disabling button for now.
+sub buttons {
+  my $self    = shift;
+  my @buttons;
+  return @buttons;
+}
+## EG
 
 
 1;
