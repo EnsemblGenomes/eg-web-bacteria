@@ -23,13 +23,12 @@ package EnsEMBL::Web::Document::HTML::FTPtable;
 use strict;
 use warnings;
 
-use EnsEMBL::Web::Hub;
 use base qw(EnsEMBL::Web::Document::HTML);
 
 
 sub render {
   my ($self, $request ) = @_;
-  my $hub          = EnsEMBL::Web::Hub->new;
+  my $hub          = $self->hub;
   my $species_defs = $hub->species_defs;
   my $search       = $hub->param('search') || '';
   my $rel          = $species_defs->SITE_RELEASE_VERSION;
