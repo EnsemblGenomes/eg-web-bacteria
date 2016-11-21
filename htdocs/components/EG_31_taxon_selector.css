@@ -1,0 +1,8 @@
+div.taxon_selector_list .selected-sp-img img{
+  display: none;
+}
+
+div.taxon_selector_form ul.list li img,
+div.ss-alignment-container .ss-alignment-selected-label img {
+  display: none;
+}
