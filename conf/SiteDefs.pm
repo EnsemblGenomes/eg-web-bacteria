@@ -48,7 +48,7 @@ sub update_conf {
     $SiteDefs::ENSEMBL_SECONDARY_SPECIES = 'Tropheryma_whipplei_tw08_27'; 
     $SiteDefs::__species_aliases{ 'Tropheryma_whipplei_tw08_27'       } = [qw(tw)];
 
-    $SiteDefs::MAX_PROCESS_SIZE = 4000000; # Kill httpd over 4,000,000KB
+    $SiteDefs::ENSEMBL_MAX_PROCESS_SIZE = 4000000; # Kill httpd over 4,000,000KB
 
     $SiteDefs::ENSEMBL_HMMER_ENABLED = 1;
 }
