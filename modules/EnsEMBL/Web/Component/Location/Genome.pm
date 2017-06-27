@@ -228,9 +228,6 @@ sub content {
       } else {
         $html .= $self->_info('Unassembled genome', '<p>This genome has yet to be assembled into chromosomes</p>');
       }
-      
-      my $sfile = sprintf("/ssi/species/stats_%s.html", $species);
-      $html .=  EnsEMBL::Web::Controller::SSI::template_INCLUDE($self, $sfile);
   }
 
   return $html;
