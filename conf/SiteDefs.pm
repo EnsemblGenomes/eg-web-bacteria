@@ -48,7 +48,7 @@ sub update_conf {
     $SiteDefs::ENSEMBL_SECONDARY_SPECIES = 'Tropheryma_whipplei_tw08_27'; 
     $SiteDefs::__species_aliases{ 'Tropheryma_whipplei_tw08_27'       } = [qw(tw)];
 
-    $SiteDefs::ENSEMBL_MAX_PROCESS_SIZE = 2800000; # Kill httpd over 2,800,000KB
+    $SiteDefs::ENSEMBL_MAX_PROCESS_SIZE = 2500000; # Kill httpd over 2,500,000KB
     $SiteDefs::ENSEMBL_MAX_CLIENTS      = 12;      # Limit child processes to 12
     
     $SiteDefs::ENSEMBL_HMMER_ENABLED = 1;
