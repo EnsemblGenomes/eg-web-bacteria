@@ -30,6 +30,7 @@ sub update_conf {
     $SiteDefs::ENSEMBL_SERVERNAME     = 'bacteria.ensembl.org';
 
     $SiteDefs::EG_DIVISION = 'bacteria';
+    $SiteDefs::SUBDOMAIN_DIR    = 'bacteria';
     $SiteDefs::SITE_NAME = 'Ensembl Bacteria';
     $SiteDefs::ENSEMBL_SITETYPE = 'Ensembl Bacteria';
     $SiteDefs::SITE_FTP= 'ftp://ftp.ensemblgenomes.org/pub/bacteria';
