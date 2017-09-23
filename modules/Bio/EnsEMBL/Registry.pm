@@ -297,7 +297,7 @@ sub get_adaptor {
       for ( my $i = 0; $i < $num_adaptors; $i++ ) {
           if ( (@$ref_adaptors)[2*$i] eq $lc_type ) {
               my $adaptor = (@$adaptors)[int $i/64];
-              if ( $adaptor & (1 << $i) ) {
+              if ( $adaptor & (1 << ($i % 64)) ) {
                   $ret = (@$ref_adaptors)[2*$i+1];
                   last;
               }
