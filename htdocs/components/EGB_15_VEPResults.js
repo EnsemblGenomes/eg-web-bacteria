@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-Ensembl.Panel.VEPResultsSummary = Ensembl.Panel.VEPResultsSummary.extend({
+Ensembl.Panel.VEPResultsSummary = Ensembl.Panel.Piechart.extend({
   init: function () {
     var panel = this;
 
