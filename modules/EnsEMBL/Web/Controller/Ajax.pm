@@ -91,13 +91,13 @@ sub ajax_ftp_list {
       my $alias              = $species_defs->get_config($spp, 'SPECIES_ALIAS');
       my $sp_dir             = lc($spp);
       my $sp_var             = lc($spp) . '_variation';
-      my $sp_vep             = lc($spp) . "_vep_$rel.tar.gz";
       my $common             = $species_defs->get_config($spp, 'SPECIES_COMMON_NAME');
       my $genomic_unit       = $species_defs->get_config($spp, 'GENOMIC_UNIT');
       my $collection         = lc ($species_defs->get_config($spp, 'SPECIES_DATASET') . '_collection' );
       my $ftp_base_path_stub = "ftp://ftp.ensemblgenomes.org/pub/release-$rel/$genomic_unit/";
       my $db_name            = $species_defs->get_config($spp, 'databases')->{DATABASE_CORE}->{NAME};
-      my $assembly           = $species_defs->get_config($spp, 'ASSEMBLY_NAME');
+      my $assembly           = $species_defs->get_config($spp, 'ASSEMBLY_NAME');      
+      my $sp_vep             = lc($spp) . "_vep_$rel\_$assembly.tar.gz";
       my $embl_link;
 
       if (my @ranges = $self->_ena_ranges($species_ena->{$spp})) {
@@ -120,7 +120,7 @@ sub ajax_ftp_list {
         sprintf('%s',  $embl_link),
         sprintf('<a rel="external" href="%s/mysql/%s">MySQL</a>',  $ftp_base_path_stub, $db_name),
         sprintf('<a rel="external" href="%s/gtf/%s/%s/">GTF</a>',  $ftp_base_path_stub, $collection, $sp_dir),
-        sprintf('<a rel="external" href="%s/vep/%s/%s/">VEP</a>',  $ftp_base_path_stub, $collection, $sp_vep),
+        sprintf('<a rel="external" href="%s/variation/vep/%s/%s">VEP</a>',  $ftp_base_path_stub, $collection, $sp_vep),
         sprintf('<a rel="external" href="%s/tsv/%s/%s/">TSV</a>',  $ftp_base_path_stub, $collection, $sp_dir),
       ];
     }
