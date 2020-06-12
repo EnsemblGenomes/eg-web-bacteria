@@ -126,8 +126,10 @@ Ensembl.Panel.ZMenu = Ensembl.Panel.ZMenu.extend({
     
     menu = [
       '<a href="/' + this.species.replace(/-/g, '/') + '/Location/' + view + url + '">Jump to location ' + view + '</a>',
-      '<a href="/' + this.species.replace(/-/g, '/') + '/Location/Chromosome' + url + '">Chromosome summary</a>'
     ];
+    if (!window.location.pathname.match('/Chromosome')) {
+      menu.push('<a href="' + this.speciesPath + '/Location/Chromosome' + url + '">Chromosome summary</a>');
+    }
     
     this.buildMenu(menu, caption);
   },
@@ -151,7 +153,6 @@ Ensembl.Panel.ZMenu = Ensembl.Panel.ZMenu.extend({
       
       menu = [
         '<a href="' + myself.speciesPath + '/Location/View' + url + '">Jump to location View</a>',
-        '<a href="' + myself.speciesPath + '/Location/Chromosome' + url + '">Chromosome summary</a>'
       ];
     }
     
