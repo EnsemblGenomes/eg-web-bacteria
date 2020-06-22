@@ -1,0 +1,108 @@
+<html>
+<head>
+<meta name="order" content="1" />
+<title>Ensembl Bacteria pipeline</title>
+</head>
+
+<body>
+
+<h1>Ensembl Bacteria pipeline</h1>
+
+<p>Ensembl Bacteria contains genomes from annotated INSDC records that are loaded into 
+Ensembl multi-species databases, using the <a href="/info/data/insdc_annotation/">INSDC annotation import</a> pipeline. This document describes how this pipeline is used for bulk loading 
+of bacteria and provides tips for handling the data.</p>
+
+<h2>Identifying genomes</h2>
+
+
+<p>Ensembl Bacteria consists of completely sequenced genomes from eubacteria and archaea, 
+which sequences have been deposited in <a href="http://www.insdc.org/about">INSDC</a>. 
+We then query the <a href="http://www.ebi.ac.uk/ena/about/genome_assembly_database">ENA Genomes Assembly Database</a> to find assembly sets for eubacteria and archaea which have at least 
+50 CDS annotations. Assembly sets are grouped into collections of up to 250 genomes. 
+There are no strict rules guiding the assignment of genomes to particular collections, 
+but a given genome will usually stay in the same collection. The collections of genomes are then 
+passed to the <a href="/info/data/insdc_annotation">INSDC annotation import</a> pipeline 
+for loading into Ensembl.</p>
+
+<h2>Genome names and identifiers</h2>
+
+<p>Genomes in Ensembl Bacteria are assigned the names and 
+<a href="http://www.ncbi.nlm.nih.gov/taxonomy">NCBI taxonomy</a> identifiers obtained from 
+the corresponding ENA Genomes Assembly Database record. However these names and identifiers 
+are not always unique, and exact names may change between releases. For some genomes, 
+the most stable identifiers can be the unique assembly accessions assigned by the ENA 
+Genomes Assembly Database, <em>e.g. </em>GCA_000005845.1. Each assembly also has an externally 
+assigned name, also obtained from the ENA Genome Assembly Database, <em>e.g.</em> ASM584v1. 
+This may be used to disambiguate cases where the organism names happen to be the same 
+(e.g. <i>Borrelia afzelii</i> PKo (ASM22283v1) vs. <i>Borrelia afzelii</i> PKo (ASM16559v2)).</p>
+
+<h2>Dealing with identifier problems</h2>
+
+<p>For older records (and other special cases), locus_tag and/or protein_id qualifiers can be 
+either missing or duplicated within/between records. This may reflect errors in annotation 
+or submission, and systematic problems such as the reuse of locus tag prefixes between 
+different entries. We try to resolve identifiers problems as follows:</p>
+
+<ul>
+  <li>intra-genome problems
+    <ul>
+      <li>collate all features with duplicated identifiers and
+        <ul>
+          <li>reject genomes with features of the same types with the same identifier or</li>
+          <li>if duplicates are shared between features of different types, retain for 
+              protein_coding and discard for others
+          </li>
+        </ul>
+      </li>
+      <li>collate all features with missing identifiers
+        <ul>
+          <li>protein_coding genes
+            <ul>
+              <li>if</li>
+              <li>otherwise, reject the genome</li>
+            </ul>
+          </li>
+          <li>for all other missing identifiers, a new Ensembl identifier of the form ENA[GTP]n 
+              (e.g. ENAG000001) is assigned (this is stable provided the underlying feature 
+              does not change)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>inter-genome problems
+    <ul>
+      <li>find all sets of genomes that share duplicated identifiers</li>
+      <li>retain identifiers on the genome that was submitted first
+        <ul>
+          <li>discard the genome if the level of duplication is less than 50% (likely to be individual annotation/submission errors)</li>
+          <li>assign new Ensembl identifiers if the duplication is more than 50% (likely to be a systematic error such as prefix reuse)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2>Other data sources</h2>
+
+<p>In addition to the annotation loaded using INSDC, the following data sources are also used 
+to enrich the annotation of our genomes:</p>
+
+<ol>
+  <li>Data from <a href="http://regulondb.ccg.unam.mx/">RegulonDB</a> is used to add 
+polycistronic transcripts, and operons and other regulatory features, to the 
+<a href="/escherichia_coli_str_k_12_substr_mg1655/">Escherichia coli K-12 MG1655</a> 
+reference genome </li>
+  <li><a href="http://www.ebi.ac.uk/rhea/">Rhea</a> and <a href="http://www.metacyc.org/">MetaCyc</a> cross-references are added using data from <a href="/info/about/collaborations/microme.html">Microme</a></li>
+</ol>
+
+<h2>Comparative Genomics</h2>
+
+<p>Owing to the number of genomes included in Ensembl Bacteria, gene trees and whole genome 
+aligments are not calculated for all genomes, but gene families are still populated based on 
+<a href="http://www.ebi.ac.uk/interpro/">InterPro</a> annotation. A large number of bacterial 
+genomes are included in the Ensembl Genomes <a href="/info/data/genome/compara/pan_compara.html">pan-taxonomic compara</a> 
+for which gene trees are built using selected genomes from across the taxonomy.</p>
+
+
+</body>
+</html>
