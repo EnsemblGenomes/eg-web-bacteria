@@ -91,7 +91,7 @@ sub ajax_ftp_list {
       my $alias              = $species_defs->get_config($spp, 'SPECIES_ALIAS');
       my $sp_dir             = lc($spp);
       my $sp_var             = lc($spp) . '_variation';
-      my $common             = $species_defs->get_config($spp, 'SPECIES_COMMON_NAME');
+      my $display_name       = $species_defs->get_config($spp, 'SPECIES_DISPLAY_NAME');
       my $genomic_unit       = $species_defs->get_config($spp, 'GENOMIC_UNIT');
       my $collection         = lc ($species_defs->get_config($spp, 'SPECIES_DATASET') . '_collection' );
       my $ftp_base_path_stub = "ftp://ftp.ensemblgenomes.org/pub/release-$rel/$genomic_unit/";
@@ -113,7 +113,7 @@ sub ajax_ftp_list {
 
       push @$rows, [
         join (' ', ref $alias eq 'ARRAY' ? @$alias : ($alias)),
-        sprintf('<strong><i><a href="/%s">%s</a></i></strong>', $sp_dir, $common),
+        sprintf('<strong><i><a href="/%s">%s</a></i></strong>', $sp_dir, $display_name),
         sprintf('<a rel="external" href="%s/fasta/%s/%s/dna/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
         sprintf('<a rel="external" href="%s/fasta/%s/%s/cdna/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),
         sprintf('<a rel="external" href="%s/fasta/%s/%s/pep/">FASTA</a>',  $ftp_base_path_stub, $collection, $sp_dir),

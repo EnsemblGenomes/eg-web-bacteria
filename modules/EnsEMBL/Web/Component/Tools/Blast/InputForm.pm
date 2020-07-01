@@ -26,9 +26,9 @@ use warnings;
 sub getSpeciesDisplayHtml {
   my $self = shift;
   my $species = shift;
-  my $common_name = sprintf '<span class="ss-selected">%s</span>', 
-                    $self->hub->species_defs->get_config($species, 'SPECIES_COMMON_NAME');
-  return $common_name;
+  my $display_name = sprintf '<span class="ss-selected">%s</span>', 
+                    $self->hub->species_defs->get_config($species, 'SPECIES_DISPLAY_NAME');
+  return $display_name;
 }
 ##
 

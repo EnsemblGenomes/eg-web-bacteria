@@ -141,7 +141,7 @@ my $tree_node = $self->create_node(
   );
   $pancompara_menu->append($fam_node);
   my $sd = ref($self->{'object'}) ? $self->{'object'}->species_defs : undef;
-  my $name = $sd ? $sd->SPECIES_COMMON_NAME : '';
+  my $name = $sd ? $sd->SPECIES_DISPLAY_NAME : '';
   $fam_node->append($self->create_subnode(
     'Family/Genes_pan_compara', uc($name).' genes in this family',
     [qw(genes    EnsEMBL::Web::Component::Gene::FamilyGenes)],

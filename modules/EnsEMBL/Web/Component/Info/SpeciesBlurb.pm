@@ -29,7 +29,7 @@ sub content {
   my $hub               = $self->hub;
   my $species_defs      = $hub->species_defs;
   my $species           = $hub->species;
-  my $common_name       = $species_defs->SPECIES_COMMON_NAME;
+  my $common_name       = $species_defs->SPECIES_DISPLAY_NAME;
   my $display_name      = $species_defs->SPECIES_SCIENTIFIC_NAME;
   my $ensembl_version   = $species_defs->ENSEMBL_VERSION;
   my $current_assembly  = $species_defs->ASSEMBLY_NAME;

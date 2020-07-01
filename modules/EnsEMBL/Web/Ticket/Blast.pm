@@ -86,7 +86,7 @@ sub _process_user_input {
 ## EG
     my $assembly  = $sd->get_config($species, 'ASSEMBLY_VERSION') || '';
 ## 
-    my $summary   = sprintf('%s against %s %s (%s)', $search_method, $sd->get_config($species, 'SPECIES_COMMON_NAME'), $assembly, $source_types->{$params->{'source'}});
+    my $summary   = sprintf('%s against %s %s (%s)', $search_method, $sd->get_config($species, 'SPECIES_DISPLAY_NAME'), $assembly, $source_types->{$params->{'source'}});
 
     for my $sequence (@$sequences) {
 

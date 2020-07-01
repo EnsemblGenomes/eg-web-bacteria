@@ -28,7 +28,7 @@ sub content {
   my $species_defs = $hub->species_defs;
   my $species      = $hub->species;
   my $img_url      = $self->img_url;
-  my $common_name  = $species_defs->SPECIES_COMMON_NAME;
+  my $common_name  = $species_defs->SPECIES_DISPLAY_NAME;
   my $display_name = $species_defs->SPECIES_SCIENTIFIC_NAME;
   my $taxid        = $species_defs->TAXONOMY_ID;
   my $sound        = $species_defs->SAMPLE_DATA->{'ENSEMBL_SOUND'};
