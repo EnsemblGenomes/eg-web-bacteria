@@ -30,7 +30,7 @@ sub ajax_species_list {
     $rows = lock_retrieve($cache_file);
 
   } else {
-    my $pan_compara  = $species_defs->get_config('MULTI', 'DATABASE_COMPARA_PAN_ENSEMBL');
+    my $pan_compara  = $species_defs->multiX('PAN_COMPARA_LOOKUP') || {};
       
     foreach my $species (sort $species_defs->valid_species) {
       my $alias          = $species_defs->get_config($species, 'SPECIES_ALIAS');
@@ -39,7 +39,7 @@ sub ajax_species_list {
       my $serotype       = $species_defs->get_config($species, 'SEROTYPE');
       my $publications   = $species_defs->get_config($species, 'PUBLICATIONS');
       my $display_name   = $species_defs->species_display_label($species);
-      my $in_pan_compara = exists $pan_compara->{GENOME_DB}->{$species}; 
+      my $in_pan_compara = exists $pan_compara->{$species}; 
        
       push @$rows, [
         join (' ', ref $alias eq 'ARRAY' ? @$alias : ($alias)),
