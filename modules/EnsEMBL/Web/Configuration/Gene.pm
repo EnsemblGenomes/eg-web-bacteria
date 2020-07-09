@@ -71,10 +71,10 @@ sub modify_tree {
 ## Compara tree
 
 my $tree_node = $self->create_node(
-    'Compara_Tree/pan_compara', "Gene Tree",
+    'PanComparaTree', "Gene Tree",
     [qw(
-      tree_summary EnsEMBL::Web::Component::Gene::ComparaTreeSummary
-      image EnsEMBL::Web::Component::Gene::ComparaTree
+      tree_summary EnsEMBL::Web::Component::Gene::PanComparaTreeSummary
+      image EnsEMBL::Web::Component::Gene::PanComparaTree
     )],
     { 'availability' => 'gene database:compara_pan_ensembl core has_gene_tree_pan' }
   );
