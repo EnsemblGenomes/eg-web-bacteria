@@ -30,7 +30,7 @@ sub ajax_species_list {
     $rows = lock_retrieve($cache_file);
 
   } else {
-    my $pan_compara  = $species_defs->multiX('PAN_COMPARA_LOOKUP') || {};
+    my $pan_compara  = $species_defs->get_config('MULTI', 'PAN_COMPARA_LOOKUP') || {};
       
     foreach my $species (sort $species_defs->valid_species) {
       my $alias          = $species_defs->get_config($species, 'SPECIES_ALIAS');
@@ -39,7 +39,7 @@ sub ajax_species_list {
       my $serotype       = $species_defs->get_config($species, 'SEROTYPE');
       my $publications   = $species_defs->get_config($species, 'PUBLICATIONS');
       my $display_name   = $species_defs->species_display_label($species);
-      my $in_pan_compara = exists $pan_compara->{$species}; 
+      my $in_pan_compara = $pan_compara->{$species} ? 'Y' : 'N'; 
        
       push @$rows, [
         join (' ', ref $alias eq 'ARRAY' ? @$alias : ($alias)),
@@ -48,7 +48,7 @@ sub ajax_species_list {
         qq{<a href="http://www.uniprot.org/taxonomy/$tax_id">$tax_id</a>},
         $serotype,
         join(' ', map { qq{<a href="http://europepmc.org/abstract/MED/$_">$_</a>} } @{ $publications || [] }),
-        $in_pan_compara ? 'Y' : 'N', # hack to reverse sorting
+        $in_pan_compara
       ];
     }
   
