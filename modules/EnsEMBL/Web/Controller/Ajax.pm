@@ -33,13 +33,14 @@ sub ajax_species_list {
     my $pan_compara  = $species_defs->get_config('MULTI', 'PAN_COMPARA_LOOKUP') || {};
       
     foreach my $species (sort $species_defs->valid_species) {
+      my $prod_name      = $species_defs->get_config($species, 'SPECIES_PRODUCTION_NAME');
       my $alias          = $species_defs->get_config($species, 'SPECIES_ALIAS');
       my $tax_id         = $species_defs->get_config($species, 'TAXONOMY_ID');
       my $assembly_name  = $species_defs->get_config($species, 'ASSEMBLY_NAME');
       my $serotype       = $species_defs->get_config($species, 'SEROTYPE');
       my $publications   = $species_defs->get_config($species, 'PUBLICATIONS');
       my $display_name   = $species_defs->species_display_label($species);
-      my $in_pan_compara = $pan_compara->{$species} ? 'Y' : 'N'; 
+      my $in_pan_compara = $pan_compara->{$prod_name} ? 'Y' : 'N'; 
        
       push @$rows, [
         join (' ', ref $alias eq 'ARRAY' ? @$alias : ($alias)),
