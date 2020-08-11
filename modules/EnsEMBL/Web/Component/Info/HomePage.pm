@@ -28,8 +28,8 @@ sub content {
   my $species_defs = $hub->species_defs;
   my $species      = $hub->species;
   my $img_url      = $self->img_url;
-  my $common_name  = $species_defs->SPECIES_DISPLAY_NAME;
-  my $display_name = $species_defs->SPECIES_SCIENTIFIC_NAME;
+  my $display_name  = $species_defs->SPECIES_DISPLAY_NAME;
+  my $sci_name = $species_defs->SPECIES_SCIENTIFIC_NAME;
   my $taxid        = $species_defs->TAXONOMY_ID;
   my $sound        = $species_defs->SAMPLE_DATA->{'ENSEMBL_SOUND'};
   my $provider_link;
@@ -54,10 +54,10 @@ sub content {
 
   $html .= qq(<img src="${img_url}species/64/$species.png" alt="" title="$sound" />) unless $self->is_bacteria;
 
-  if ($common_name =~ /\./) {
-    $html .= qq(<h1>$display_name</h1>);
+  if ($display_name =~ /\./) {
+    $html .= qq(<h1>$sci_name</h1>);
   } else {
-    $html .= qq(<h1>$common_name</h1><p>$display_name</p>);
+    $html .= qq(<h1>$display_name</h1><p>$sci_name</p>);
   }
 
   $html .= '<p class="taxon-id">';
@@ -70,16 +70,16 @@ sub content {
 
   $html .= '</div>'; #box-left
   $html .= '<div class="box-right">';
-  
-  if (my $ack_text = $self->_other_text('acknowledgement', $species)) {
-    $html .= '<div class="plain-box round-box unbordered">' . $ack_text . '</div>';
+ 
+  if (my $ack_text = $self->_fragment('acknowledgement', $species, 1)) {
+    $html .= '<div class="info-box embedded-box">'.$ack_text.'</div>';
   }
-
+ 
   $html .= '</div>'; # box-right
   $html .= '</div>'; # column-wrapper
 
   $html .= '<div class="column-wrapper"><div class="round-box tinted-box unbordered">'; 
-  $html .= qq{<h2 id="about">About <em>$common_name</em></h2>};
+  $html .= qq{<h2 id="about">About <em>$display_name</em></h2>};
   $html .= qq(<p><a href="/$species/Info/Annotation/#about" class="nodeco"><img src="${img_url}24/info.png" alt="" class="homepage-link" />Information and statistics</a></p>);
   $html .= '</div></div>';
 
@@ -101,18 +101,13 @@ sub content {
   }
 
   push(@sections, $self->_variation_text);
- #$html .= '<div class="' . $box_class[$side % 2] . '"><div class="round-box tinted-box unbordered">' . $self->_variation_text . '</div></div>';
- #$side++;
 
   if ($hub->database('funcgen')) {
     push(@sections, $self->_funcgen_text);
-  # $html .= '<div class="' . $box_class[$side % 2] . '"><div class="round-box tinted-box unbordered">' . $self->_funcgen_text . '</div></div>';
-  # $side++;
   }
 
-  my $other_text = $self->_other_text('other', $species);
+  my $other_text = $self->_fragment('other', $species, 1);
   push(@sections, $other_text) if $other_text =~ /\w/;
- #$html .= '<div class="' . $box_class[$side % 2] . '"><div class="round-box tinted-box unbordered">' . $other_text . '</div></div>' if $other_text =~ /\w/;
   
   my @box_class = ('box-left', 'box-right');
   my $side = 0;
