@@ -41,7 +41,7 @@ sub update_conf {
     map {delete($SiteDefs::__species_aliases{$_}) } keys %SiteDefs::__species_aliases;
   
     $SiteDefs::PRODUCTION_NAMES = [];
-    push (@{$SiteDefs::PRODUCTION_NAMES}, "bacteria_$_") foreach (0..183);
+    push (@{$SiteDefs::PRODUCTION_NAMES}, "bacteria_$_") foreach (0..128);
     
     $SiteDefs::ENSEMBL_PRIMARY_SPECIES = 'Escherichia_coli_str_k_12_substr_mg1655'; 
     $SiteDefs::__species_aliases{ 'Escherichia_coli_str_k_12_substr_mg1655'       } = [qw(ec)];
