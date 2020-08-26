@@ -124,9 +124,7 @@ Ensembl.Panel.ZMenu = Ensembl.Panel.ZMenu.extend({
     
     url = this.baseURL.replace(/.+\?/, '?').replace(/%s/, this.chr + ':' + start + '-' + end);
     
-    menu = [
-      '<a href="/' + this.species.replace(/-/g, '/') + '/Location/' + view + url + '">Jump to location ' + view + '</a>',
-    ];
+    menu = ['<a href="/' + this.species.replace(/-/g, '/') + '/Location/' + view + url + '">Jump to location ' + view + '</a>'];
     if (!window.location.pathname.match('/Chromosome')) {
       menu.push('<a href="' + this.speciesPath + '/Location/Chromosome' + url + '">Chromosome summary</a>');
     }
@@ -151,9 +149,7 @@ Ensembl.Panel.ZMenu = Ensembl.Panel.ZMenu.extend({
     function notLocation() {
       url = url.replace(/.+\?/, '?');
       
-      menu = [
-        '<a href="' + myself.speciesPath + '/Location/View' + url + '">Jump to location View</a>',
-      ];
+      menu = ['<a href="' + myself.speciesPath + '/Location/View' + url + '">Jump to location View</a>'];
     }
     
     // Multi species view
