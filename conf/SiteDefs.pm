@@ -43,11 +43,11 @@ sub update_conf {
     $SiteDefs::PRODUCTION_NAMES = [];
     push (@{$SiteDefs::PRODUCTION_NAMES}, "bacteria_$_") foreach (0..128);
     
-    $SiteDefs::ENSEMBL_PRIMARY_SPECIES = 'Escherichia_coli_str_k_12_substr_mg1655'; 
-    $SiteDefs::__species_aliases{ 'Escherichia_coli_str_k_12_substr_mg1655'       } = [qw(ec)];
+    $SiteDefs::ENSEMBL_PRIMARY_SPECIES = 'Escherichia_coli_str_k_12_substr_mg1655_gca_000005845';
+    $SiteDefs::__species_aliases{ 'Escherichia_coli_str_k_12_substr_mg1655_gca_000005845' } = [qw(ec)];
         
-    $SiteDefs::ENSEMBL_SECONDARY_SPECIES = 'Tropheryma_whipplei_tw08_27'; 
-    $SiteDefs::__species_aliases{ 'Tropheryma_whipplei_tw08_27'       } = [qw(tw)];
+    $SiteDefs::ENSEMBL_SECONDARY_SPECIES = 'Tropheryma_whipplei_str_twist_gca_000007485'; 
+    $SiteDefs::__species_aliases{ 'Tropheryma_whipplei_str_twist_gca_000007485' } = [qw(tw)];
 
     $SiteDefs::ENSEMBL_MAX_PROCESS_SIZE = 2500000; # Kill httpd over 2,500,000KB
     $SiteDefs::ENSEMBL_MAX_CLIENTS      = 12;      # Limit child processes to 12
