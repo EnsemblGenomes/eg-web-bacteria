@@ -95,7 +95,7 @@ sub ajax_ftp_list {
       my $display_name       = $species_defs->get_config($spp, 'SPECIES_DISPLAY_NAME');
       my $genomic_unit       = $species_defs->get_config($spp, 'GENOMIC_UNIT');
       my $collection         = lc ($species_defs->get_config($spp, 'SPECIES_DATASET') . '_collection' );
-      my $ftp_base_path_stub = "ftp://ftp.ensemblgenomes.org/pub/release-$rel/$genomic_unit/";
+      my $ftp_base_path_stub = "http://ftp.ensemblgenomes.org/pub/release-$rel/$genomic_unit/";
       my $db_name            = $species_defs->get_config($spp, 'databases')->{DATABASE_CORE}->{NAME};
       my $assembly           = $species_defs->get_config($spp, 'ASSEMBLY_NAME');      
       my $sp_vep             = lc($spp) . "_vep_$rel\_$assembly.tar.gz";
