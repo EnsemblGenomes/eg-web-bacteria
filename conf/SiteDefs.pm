@@ -53,6 +53,7 @@ sub update_conf {
     $SiteDefs::ENSEMBL_MAX_CLIENTS      = 12;      # Limit child processes to 12
     
     $SiteDefs::ENSEMBL_HMMER_ENABLED = 1;
+    $SiteDefs::ENSEMBL_IDM_ENABLED   = 0;
     $SiteDefs::DIVISION = "bacteria";
 }
 
