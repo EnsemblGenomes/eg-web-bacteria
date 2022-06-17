@@ -80,14 +80,12 @@ sub transcript_table {
 ##
 
   my $gene = $page_type eq 'gene' ? $object->Obj : $object->gene;
-  $self->add_phenotype_link($gene, $table); #function in mobile plugin
-
   my $seq_region_name  = $object->seq_region_name;
   my $seq_region_start = $object->seq_region_start;
   my $seq_region_end   = $object->seq_region_end;
 
   my $location_html = sprintf(
-    '<a href="%s" class="constant mobile-nolink dynamic-link">%s: %s-%s</a> %s.',
+    '<a href="%s" class="constant dynamic-link">%s: %s-%s</a> %s.',
     $hub->url({
       type   => 'Location',
       action => 'View',
@@ -152,7 +150,7 @@ sub transcript_table {
         my ($altchr, $altstart, $altend, $altseqregion) = @$loc;
         
         $location_html .= sprintf('
-          <li><a href="/%s/Location/View?l=%s:%s-%s" class="constant mobile-nolink">%s : %s-%s</a></li>', 
+          <li><a href="/%s/Location/View?l=%s:%s-%s" class="constant">%s : %s-%s</a></li>', 
           $species, $altchr, $altstart, $altend, $altchr,
           $self->thousandify($altstart),
           $self->thousandify($altend)
@@ -366,9 +364,7 @@ sub transcript_table {
 
     # Add rows to transcript table
     push @rows, @{$biotype_rows{$_}} for sort keys %biotype_rows; 
-    
-    @columns = $self->table_removecolumn(@columns); # implemented in mobile plugin
-    
+        
     $transc_table = $self->new_table(\@columns, \@rows, {
       data_table        => 1,
       data_table_config => { bPaginate => 'false', asStripClasses => [ '', '' ], oSearch => { sSearch => '', bRegex => 'false', bSmart => 'false' } },
