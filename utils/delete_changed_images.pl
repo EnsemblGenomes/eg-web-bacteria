@@ -45,7 +45,7 @@ die "Usage: delete_changed_images.pl --release=26" unless $release;
 die "Image dir not found ($image_dir)" unless -d $image_dir;
 
 foreach (@files) {
-  `curl ftp://ftp.ensemblgenomes.org/pub/.release-$release/bacteria/$_ > /tmp/$_`;
+  `curl https://ftp.ensemblgenomes.ebi.ac.uk/pub/.release-$release/bacteria/$_ > /tmp/$_`;
   my @lines = read_file( "/tmp/$_" );
   shift @lines; # remove header row
   push @species, map {[split /\s+/]->[0]} @lines;   

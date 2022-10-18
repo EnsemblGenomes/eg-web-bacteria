@@ -33,7 +33,7 @@ sub update_conf {
     $SiteDefs::SUBDOMAIN_DIR    = 'bacteria';
     $SiteDefs::SITE_NAME = 'Ensembl Bacteria';
     $SiteDefs::ENSEMBL_SITETYPE = 'Ensembl Bacteria';
-    $SiteDefs::SITE_FTP= 'http://ftp.ensemblgenomes.org/pub/bacteria';
+    $SiteDefs::SITE_FTP= 'https://ftp.ensemblgenomes.ebi.ac.uk/pub/bacteria';
 
     $SiteDefs::DISABLE_SPECIES_DROPDOWN = 1;
     $SiteDefs::LARGE_SPECIES_SET        = 1;
