@@ -64,8 +64,8 @@ sub render {
       </p>
       <p>
         Ensembl Genomes:
-        <a href="http://ftp.ensemblgenomes.org/pub/pan_ensembl/release-$rel/mysql/">MySQL</a> |
-        <a href="http://ftp.ensemblgenomes.org/pub/pan_ensembl/release-$rel/tsv/">TSV</a> |
+        <a href="https://ftp.ensemblgenomes.ebi.ac.uk/pub/pan_ensembl/release-$rel/mysql/">MySQL</a> |
+        <a href="https://ftp.ensemblgenomes.ebi.ac.uk/pub/pan_ensembl/release-$rel/tsv/">TSV</a> |
       </p>
     </div>
   };               
