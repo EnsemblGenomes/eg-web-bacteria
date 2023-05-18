@@ -140,6 +140,11 @@ sub modify_tree {
 
       $tree_node->append($D);
 
+      $tree_node->append($self->create_node('AFDB', 'AlphaFold predicted model',
+        [qw( alignment EnsEMBL::Web::Component::Transcript::AFDB )],
+        { 'availability' => 'transcript translation has_afdb','concise' => 'AlphaFold predicted model' }
+      ));
+
       $url = $hub->url({
                   type   => 'Transcript',
                   action => 'ProtVariations_'.$p,
