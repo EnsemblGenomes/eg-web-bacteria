@@ -117,7 +117,7 @@ sub content {
   ## add frameshift introns info
   my $frameshift_introns = $object->get_frameshift_introns;
 
-  $table->add_row('Frameshift introns', $self->glossary_helptip('Frameshift introns', 'Frameshift intron') . " occur at intron number(s)  $frameshift_introns.") if $frameshift_introns;
+  $table->add_row('Frameshift introns', glossary_helptip($self->hub, 'Frameshift introns', 'Frameshift intron') . " occur at intron number(s)  $frameshift_introns.") if $frameshift_introns;
 
 
   ## add trans-spliced transcript info
